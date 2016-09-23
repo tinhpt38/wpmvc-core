@@ -2,7 +2,7 @@
 
 namespace WPMVC;
 
-use Katzgrau\KLogger\Logger;
+use WPMVC\KLogger\Logger;
 use WPMVC\Config;
 use WPMVC\Contracts\Loggable;
 

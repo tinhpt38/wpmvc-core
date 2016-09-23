@@ -3,7 +3,7 @@
 namespace WPMVC;
 
 use Closure;
-use PHPFastCache\phpFastCache;
+use WPMVC\PHPFastCache\phpFastCache;
 use WPMVC\Contracts\Cacheable;
 
 /**
