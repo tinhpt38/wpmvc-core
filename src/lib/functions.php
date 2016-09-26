@@ -1,4 +1,9 @@
 <?php
+
+use Ayuco\Listener;
+use WPMVC\Commands\SetNameCommand;
+use WPMVC\Commands\SetupCommand;
+
 /**
  * CORE wordpress functions.
  *
@@ -6,7 +11,7 @@
  * @copyright 10Quality <http://www.10quality.com>
  * @license MIT
  * @package WPMVC
- * @version 2.0.3
+ * @version 2.0.4
  */
 
 if ( ! function_exists( 'resize_image' ) ) {
@@ -128,9 +133,6 @@ if ( ! function_exists( 'get_ayuco' ) ) {
      */
     function get_ayuco($path)
     {
-        use Ayuco\Listener;
-        use WPMVC\Commands\SetNameCommand;
-        use WPMVC\Commands\SetupCommand;
 
         $ayuco = new Listener();
 
@@ -138,5 +140,21 @@ if ( ! function_exists( 'get_ayuco' ) ) {
         $ayuco->register(new SetupCommand($path));
 
         return $ayuco;
+    }
+}
+
+if ( ! function_exists( 'get_wp_home_path' ) )
+{
+    /**
+     * Returns wordpress root path.
+     * @since 2.0.4
+     *
+     * @return string
+     */
+    function get_wp_home_path()
+    {
+        return function_exists( 'get_home_path' )
+            ? get_home_path()
+            : preg_replace( '/wp-content[A-Za-z0-9\.\-\\\_]+/', '', __DIR__ );
     }
 }
