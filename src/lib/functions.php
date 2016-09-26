@@ -6,7 +6,7 @@
  * @copyright 10Quality <http://www.10quality.com>
  * @license MIT
  * @package WPMVC
- * @version 1.0.2
+ * @version 2.0.3
  */
 
 if ( ! function_exists( 'resize_image' ) ) {
@@ -114,5 +114,29 @@ if ( ! function_exists( 'asset_url' ) ) {
         if ( preg_match( '/themes/', $file ) )
             $url = theme_url( $path , $file );
         return $url;
+    }
+}
+
+if ( ! function_exists( 'get_ayuco' ) ) {
+    /**
+     * Returns ayuco.
+     * @since 2.0.3
+     *
+     * @param string $path Project path.
+     *
+     * @return object
+     */
+    function get_ayuco($path)
+    {
+        use Ayuco\Listener;
+        use WPMVC\Commands\SetNameCommand;
+        use WPMVC\Commands\SetupCommand;
+
+        $ayuco = new Listener();
+
+        $ayuco->register(new SetNameCommand($path));
+        $ayuco->register(new SetupCommand($path));
+
+        return $ayuco;
     }
 }

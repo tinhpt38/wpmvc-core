@@ -17,7 +17,7 @@ use WPMVC\MVC\Engine;
  * @copyright 10Quality <http://www.10quality.com>
  * @license MIT
  * @package WPMVC
- * @version 1.0.3
+ * @version 2.0.3
  */
 abstract class Bridge implements Plugable
 {
@@ -73,6 +73,7 @@ abstract class Bridge implements Plugable
 	/**
 	 * Main constructor
 	 * @since 1.0.0
+	 * @since 2.0.3 Cache and log are obligatory configuration settings.
 	 *
 	 * @param array $config Configuration options.
 	 */
@@ -90,10 +91,8 @@ abstract class Bridge implements Plugable
 		);
 		$this->addons = array();
 		$this->set_addons();
-		if ( $this->config->get( 'cache' ) )
-			Cache::init( $this->config );
-		if ( $this->config->get( 'log' ) )
-			Log::init( $this->config );
+		Cache::init( $this->config );
+		Log::init( $this->config );
 	}
 
 	/**

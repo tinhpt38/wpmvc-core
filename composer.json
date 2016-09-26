@@ -19,6 +19,10 @@
         "10quality/wpmvc-phpfastcache": "4.0.*",
         "10quality/wpmvc-logger": "2.0.*"
     },
+    "require-dev": {
+        "10quality/wpmvc-commands": "1.0.*",
+        "phpunit/phpunit": "4.4.*"
+    },
     "autoload": {
         "files": [
             "src/lib/functions.php"
