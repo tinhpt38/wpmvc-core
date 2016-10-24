@@ -3,6 +3,8 @@
 use Ayuco\Listener;
 use WPMVC\Commands\SetNameCommand;
 use WPMVC\Commands\SetupCommand;
+use WPMVC\Commands\AddCommand;
+use WPMVC\Commands\RegisterCommand;
 
 /**
  * CORE wordpress functions.
@@ -54,57 +56,11 @@ if ( ! function_exists( 'resize_image' ) ) {
     }
 }
 
-if ( ! function_exists( 'theme_basename' ) ) {
-    /**
-     * Returens basename / relative path of a theme file.
-     * @since 1.0.2
-     *
-     * @param string $file File path.
-     *
-     * @return string
-     */
-    function theme_basename( $file )
-    {
-        return trim( preg_replace(
-            '#^' . preg_quote( wp_normalize_path( get_template_directory() ), '#' ) . '/#',
-            '',
-            wp_normalize_path( $file )
-        ) , '/');
-    }
-}
-
-if ( ! function_exists( 'theme_url' ) ) {
-    /**
-     * Returns the url based on the relative path and file passed by.
-     * @since 1.0.2
-     *
-     * @param string $path  Relative path.
-     * @param string $theme Theme file.
-     *
-     * @return string
-     */
-    function theme_url( $path, $theme )
-    {
-        $path = wp_normalize_path( $path );
-        $url = get_template_directory_uri();
-
-        if ( !empty($theme) && is_string($theme) ) {
-            $folder = dirname(theme_basename($theme));
-            if ( '.' != $folder )
-                $url .= '/' . ltrim($folder, '/');
-        }
-
-        if ( $path && is_string( $path ) )
-            $url .= '/' . ltrim($path, '/');
-
-        return $url;
-    }
-}
-
 if ( ! function_exists( 'asset_url' ) ) {
     /**
      * Returns url of asset located in a theme or plugin.
      * @since 1.0.1
+     * @since 2.0.4 Refactored to work with new structure.
      *
      * @param string  $path Asset relative path.
      * @param string  $file File location path.
@@ -113,12 +69,14 @@ if ( ! function_exists( 'asset_url' ) ) {
      */
     function asset_url( $path, $file )
     {
-        $url = home_url( '/' );
-        if ( preg_match( '/plugins/', $file ) )
-            $url = plugins_url( $path , $file );
-        if ( preg_match( '/themes/', $file ) )
-            $url = theme_url( $path , $file );
-        return $url;
+        // Preparation
+        $route = preg_replace( '/\\\\/', '/', $file );
+        $url = apply_filters( 'asset_base_url', rtrim( home_url( '/' ), '/' ) );
+        // Clean base path
+        $route = preg_replace( '/.+?(?=wp-content)/', '', $route );
+        // Clean project relative path
+        $route = preg_replace( '/\/app[\/\\A-Za-z0-9\.\\-]+/', '', $route );
+        return $url.'/'.apply_filters( 'app_route', $route ).'/assets/'.$path;
     }
 }
 
@@ -126,6 +84,7 @@ if ( ! function_exists( 'get_ayuco' ) ) {
     /**
      * Returns ayuco.
      * @since 2.0.3
+     * @since 2.0.4 Added new commands.
      *
      * @param string $path Project path.
      *
@@ -133,11 +92,12 @@ if ( ! function_exists( 'get_ayuco' ) ) {
      */
     function get_ayuco($path)
     {
-
         $ayuco = new Listener();
 
         $ayuco->register(new SetNameCommand($path));
         $ayuco->register(new SetupCommand($path));
+        $ayuco->register(new AddCommand($path));
+        $ayuco->register(new RegisterCommand($path));
 
         return $ayuco;
     }
