@@ -6,6 +6,7 @@ use WPMVC\Cache;
 use WPMVC\Log;
 use WPMVC\Contracts\Plugable;
 use WPMVC\MVC\Engine;
+use Exception;
 
 /**
  * Plugin class.
@@ -78,6 +79,13 @@ abstract class Bridge implements Plugable
     protected $models;
 
     /**
+     * List of Models that requires bridge processing to function.
+     * @var array
+     * @since 2.0.4
+     */
+    protected $_automatedModels;
+
+    /**
      * Main constructor
      * @since 1.0.0
      * @since 2.0.3 Cache and log are obligatory configuration settings.
@@ -92,6 +100,7 @@ abstract class Bridge implements Plugable
         $this->shortcodes = [];
         $this->widgets = [];
         $this->models = [];
+        $this->_automatedModels = [];
         $this->config = $config;
         $this->mvc = new Engine(
             $this->config->get( 'paths.views' ),
@@ -128,6 +137,7 @@ abstract class Bridge implements Plugable
      * Checks "addon_" prefix to search for addon methods.
      * @since 1.0.2
      * @since 1.0.3 Added MVC controller and views direct calls.
+     * @since 2.0.4 Added metabox generation.
      *
      * @return mixed
      */
@@ -177,6 +187,11 @@ abstract class Bridge implements Plugable
                     $this->override_args( $method, $args )
                 );
             }
+        } else if ( preg_match( '/^\_save\_/', $method ) ) {
+            $this->_save( preg_replace( '/^\_save\_/', '', $method ), $args );
+        }
+        } else if ( preg_match( '/^\_metabox\_/', $method ) ) {
+            $this->_metaboxes( preg_replace( '/^\_metabox\_/', '', $method ) );
         } else {
             return call_user_func_array( [ $this, $method ], $args );
         }
@@ -406,12 +421,14 @@ abstract class Bridge implements Plugable
         foreach ( $this->models as $model ) {
             $post_name = $this->config['namespace'].'\Models\\'.$model;
             $post = new $post_name;
-            unset($post_name);
+            unset( $post_name );
+            // Create registry
+            $registry - $post->registry;
             // Build registration
-            if (empty($post->registry_labels)) {
-                $name = ucwords(preg_replace('/\-\_/', ' ', $post->type));
+            if ( empty( $post->registry_labels ) ) {
+                $name = ucwords( preg_replace( '/\-\_/', ' ', $post->type ) );
                 $plural = strpos( $name, ' ' ) !== false ? $name.'s' : $name;
-                $post->registry['labels'] = [
+                $registry['labels'] = [
                     'name'               => $plural,
                     'singular_name'      => $name,
                     'menu_name'          => $plural,
@@ -427,19 +444,42 @@ abstract class Bridge implements Plugable
                     'not_found_in_trash' => sprintf( 'No %s found in Trash.', strtolower( $plural ) ),
                 ];
             } else {
-                $post->registry['labels'] = $post->registry_labels;
+                $registry['labels'] = $post->registry_labels;
             }
-            $post->registry['supports'] = $post->registry_supports;
-            if (empty($post->registry_rewrite)) {
+            $registry['supports'] = $post->registry_supports;
+            if ( empty( $post->registry_rewrite ) ) {
                 $slug = strtolower(preg_replace('/\_/', '-', $post->type));
-                $post->registry['rewrite'] = [
+                $registry['rewrite'] = [
                     'slug' => strtolower(preg_replace('/\_/', '-', $post->type)),
                 ];
             } else {
-                $post->registry['rewrite'] = $post->registry_rewrite;
+                $registry['rewrite'] = $post->registry_rewrite;
+            }
+            if ( $post->registry_metabox ) {
+                $registry['register_meta_box_cb'] = [ &$this, '_metabox_'.$post->type ];
+                $this->_automatedModels[] = $post;
+                // Add save action once
+                $addAction = true;
+                foreach ( $i = count( $this->_automatedModels )-1; $i >= 0; --$i ) {
+                    if ( $this->_automatedModels[$i]->type === $post->type ) {
+                        $addAction = false;
+                        break;
+                    }
+                }
+                if ( $addAction )
+                    add_action( 'save_post', [ &$this, '_save_'.$post->type ] );
+                unset( $addAction );
             }
             // Register
-            register_post_type( $post->type, $post->registry );
+            register_post_type( $post->type, $registry );
+            // Register taxonomies
+            if ( !empty( $post->registry_taxonomies ) ) {
+                foreach ( $post->registry_taxonomies as $taxonomy => $args ) {
+                    if ( !isset( $args ) || !is_array( $args ) )
+                        throw new Exception( 'Arguments are missing for taxonomy "'.$taxonomy.'", post type "'.$post->type.'".' );
+                    register_taxonomy( $taxonomy, $post->type, $args );
+                }
+            }
         }
     }
 
@@ -515,5 +555,52 @@ abstract class Bridge implements Plugable
             }
         }
         return $args;
+    }
+
+    /**
+     * Addes automated wordpress metaboxes based on post type.
+     * @since 2.0.4
+     *
+     * @param string $type Post type.
+     */
+    private function _metaboxes( $type )
+    {
+        // nonce
+        wp_nonce_field( '_wpmvc_post', '_wpmvc_nonce' );
+        // Metaboxes
+        foreach ( $i = count( $this->_automatedModels )-1; $i >= 0; --$i ) {
+            if ( $this->_automatedModels[$i]->type == trim( $type ) )
+                add_meta_box(
+                    '_wpmvc_'.uniqid(),
+                    $this->_automatedModels[$i]->registry_metabox['title'],
+                    [ &$this, '_c_void_'.$this->_automatedModels[$i]->registry_controller.'@_metabox' ],
+                    $type,
+                    $this->_automatedModels[$i]->registry_metabox['context'],
+                    $this->_automatedModels[$i]->registry_metabox['priority']
+                );
+        }
+    }
+
+    /**
+     * Addes automated wordpress save post functionality.
+     * @since 2.0.4
+     *
+     * @param string $type Post type.
+     * @param array  $args Hooks arguments.
+     */
+    private function _save( $type, $args )
+    {
+        // Check nonce
+        $nonce = Request::input( '_wpmvc_nonce', '', true );
+        if ( empty( $nonce ) || !wp_verify_nonce( $nonce, '_wpmvc_post' ) )
+            return;
+        // Save
+        foreach ( $i = count( $this->_automatedModels )-1; $i >= 0; --$i ) {
+            if ( $this->_automatedModels[$i]->type == trim( $type ) )
+                $this->mvc->call_args(
+                    $this->_automatedModels[$i]->registry_controller.'@_save',
+                    $args
+                );
+        }
     }
 }

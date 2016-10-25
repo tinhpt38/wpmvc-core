@@ -54,3 +54,14 @@ function do_action($key) {}
 function register_widget($class) {}
 
 function register_post_type($type, $args) {}
+
+function register_taxonomy() {}
+
+function add_meta_box() {}
+
+function wp_nonce_field() {}
+
+function wp_verify_nonce()
+{
+    return true;
+}
