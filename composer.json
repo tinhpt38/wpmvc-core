@@ -15,7 +15,7 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "10quality/wpmvc-mvc": "1.2.*",
+        "10quality/wpmvc-mvc": "2.0.*",
         "10quality/wpmvc-phpfastcache": "4.0.*",
         "10quality/wpmvc-logger": "2.0.*"
     },
