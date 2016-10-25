@@ -189,7 +189,6 @@ abstract class Bridge implements Plugable
             }
         } else if ( preg_match( '/^\_save\_/', $method ) ) {
             $this->_save( preg_replace( '/^\_save\_/', '', $method ), $args );
-        }
         } else if ( preg_match( '/^\_metabox\_/', $method ) ) {
             $this->_metaboxes( preg_replace( '/^\_metabox\_/', '', $method ) );
         } else {
@@ -419,15 +418,15 @@ abstract class Bridge implements Plugable
     public function _models()
     {
         foreach ( $this->models as $model ) {
-            $post_name = $this->config['namespace'].'\Models\\'.$model;
+            $post_name = $this->config->get('namespace').'\Models\\'.$model;
             $post = new $post_name;
             unset( $post_name );
             // Create registry
-            $registry - $post->registry;
+            $registry = $post->registry;
             // Build registration
             if ( empty( $post->registry_labels ) ) {
                 $name = ucwords( preg_replace( '/\-\_/', ' ', $post->type ) );
-                $plural = strpos( $name, ' ' ) !== false ? $name.'s' : $name;
+                $plural = strpos( $name, ' ' ) === false ? $name.'s' : $name;
                 $registry['labels'] = [
                     'name'               => $plural,
                     'singular_name'      => $name,
@@ -456,16 +455,17 @@ abstract class Bridge implements Plugable
                 $registry['rewrite'] = $post->registry_rewrite;
             }
             if ( $post->registry_metabox ) {
-                $registry['register_meta_box_cb'] = [ &$this, '_metabox_'.$post->type ];
-                $this->_automatedModels[] = $post;
                 // Add save action once
                 $addAction = true;
-                foreach ( $i = count( $this->_automatedModels )-1; $i >= 0; --$i ) {
+                for ( $i = count( $this->_automatedModels )-1; $i >= 0; --$i ) {
                     if ( $this->_automatedModels[$i]->type === $post->type ) {
                         $addAction = false;
                         break;
                     }
                 }
+                // Add post
+                $registry['register_meta_box_cb'] = [ &$this, '_metabox_'.$post->type ];
+                $this->_automatedModels[] = $post;
                 if ( $addAction )
                     add_action( 'save_post', [ &$this, '_save_'.$post->type ] );
                 unset( $addAction );
@@ -565,10 +565,8 @@ abstract class Bridge implements Plugable
      */
     private function _metaboxes( $type )
     {
-        // nonce
-        wp_nonce_field( '_wpmvc_post', '_wpmvc_nonce' );
         // Metaboxes
-        foreach ( $i = count( $this->_automatedModels )-1; $i >= 0; --$i ) {
+        for ( $i = count( $this->_automatedModels )-1; $i >= 0; --$i ) {
             if ( $this->_automatedModels[$i]->type == trim( $type ) )
                 add_meta_box(
                     '_wpmvc_'.uniqid(),
@@ -595,7 +593,7 @@ abstract class Bridge implements Plugable
         if ( empty( $nonce ) || !wp_verify_nonce( $nonce, '_wpmvc_post' ) )
             return;
         // Save
-        foreach ( $i = count( $this->_automatedModels )-1; $i >= 0; --$i ) {
+        for ( $i = count( $this->_automatedModels )-1; $i >= 0; --$i ) {
             if ( $this->_automatedModels[$i]->type == trim( $type ) )
                 $this->mvc->call_args(
                     $this->_automatedModels[$i]->registry_controller.'@_save',

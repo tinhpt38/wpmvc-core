@@ -5,6 +5,7 @@ use WPMVC\Commands\SetNameCommand;
 use WPMVC\Commands\SetupCommand;
 use WPMVC\Commands\AddCommand;
 use WPMVC\Commands\RegisterCommand;
+use WPMVC\Commands\CreateCommand;
 
 /**
  * CORE wordpress functions.
@@ -98,6 +99,7 @@ if ( ! function_exists( 'get_ayuco' ) ) {
         $ayuco->register(new SetupCommand($path));
         $ayuco->register(new AddCommand($path));
         $ayuco->register(new RegisterCommand($path));
+        $ayuco->register(new CreateCommand($path));
 
         return $ayuco;
     }
