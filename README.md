@@ -1,9 +1,9 @@
 # Core Package (For Wordpress MVC)
 --------------------------------
 
-[![Latest Stable Version](https://poser.pugx.org/10quality/wpmvc/v/stable)](https://packagist.org/packages/10quality/wpmvc)
-[![Total Downloads](https://poser.pugx.org/10quality/wpmvc/downloads)](https://packagist.org/packages/10quality/wpmvc)
-[![License](https://poser.pugx.org/10quality/wpmvc/license)](https://packagist.org/packages/10quality/wpmvc)
+[![Latest Stable Version](https://poser.pugx.org/10quality/wpmvc-core/v/stable)](https://packagist.org/packages/10quality/wpmvc-core)
+[![Total Downloads](https://poser.pugx.org/10quality/wpmvc-core/downloads)](https://packagist.org/packages/10quality/wpmvc-core)
+[![License](https://poser.pugx.org/10quality/wpmvc-core/license)](https://packagist.org/packages/10quality/wpmvc-core)
 
 Forked version for WPMVC.
 
