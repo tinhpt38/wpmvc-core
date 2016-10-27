@@ -18,7 +18,7 @@ use Exception;
  * @copyright 10Quality <http://www.10quality.com>
  * @license MIT
  * @package WPMVC
- * @version 2.0.4
+ * @version 2.0.7
  */
 abstract class Bridge implements Plugable
 {
@@ -138,6 +138,7 @@ abstract class Bridge implements Plugable
      * @since 1.0.2
      * @since 1.0.3 Added MVC controller and views direct calls.
      * @since 2.0.4 Added metabox generation.
+     * @since 2.0.7 Metabox refactored.
      *
      * @return mixed
      */
@@ -189,8 +190,8 @@ abstract class Bridge implements Plugable
             }
         } else if ( preg_match( '/^\_save\_/', $method ) ) {
             $this->_save( preg_replace( '/^\_save\_/', '', $method ), $args );
-        } else if ( preg_match( '/^\_metabox\_/', $method ) ) {
-            $this->_metaboxes( preg_replace( '/^\_metabox\_/', '', $method ) );
+        } else if ( preg_match( '/^\_metabox/', $method ) ) {
+            $this->_metaboxes();
         } else {
             return call_user_func_array( [ $this, $method ], $args );
         }
@@ -414,6 +415,7 @@ abstract class Bridge implements Plugable
     /**
      * Registers added models into Wordpress.
      * @since 2.0.4
+     * @since 2.0.7 Support for automated models with no registration.
      */
     public function _models()
     {
@@ -424,35 +426,39 @@ abstract class Bridge implements Plugable
             // Create registry
             $registry = $post->registry;
             // Build registration
-            if ( empty( $post->registry_labels ) ) {
-                $name = ucwords( preg_replace( '/\-\_/', ' ', $post->type ) );
-                $plural = strpos( $name, ' ' ) === false ? $name.'s' : $name;
-                $registry['labels'] = [
-                    'name'               => $plural,
-                    'singular_name'      => $name,
-                    'menu_name'          => $plural,
-                    'name_admin_bar'     => $name,
-                    'add_new_item'       => sprintf( 'Add New %s', $name ),
-                    'new_item'           => sprintf( 'New %s', $name ),
-                    'edit_item'          => sprintf( 'Edit %s', $name ),
-                    'view_item'          => sprintf( 'View %s', $name ),
-                    'all_items'          => sprintf( 'All %s', $plural ),
-                    'search_items'       => sprintf( 'Search %s', $plural ),
-                    'parent_item_colon'  => sprintf( 'Parent %s', $plural ),
-                    'not_found'          => sprintf( 'No %s found.', strtolower( $plural ) ),
-                    'not_found_in_trash' => sprintf( 'No %s found in Trash.', strtolower( $plural ) ),
-                ];
-            } else {
-                $registry['labels'] = $post->registry_labels;
-            }
-            $registry['supports'] = $post->registry_supports;
-            if ( empty( $post->registry_rewrite ) ) {
-                $slug = strtolower(preg_replace('/\_/', '-', $post->type));
-                $registry['rewrite'] = [
-                    'slug' => strtolower(preg_replace('/\_/', '-', $post->type)),
-                ];
-            } else {
-                $registry['rewrite'] = $post->registry_rewrite;
+            if ( !empty( $registry ) ) {
+                if ( empty( $post->registry_labels ) ) {
+                    $name = ucwords( preg_replace( '/\-\_/', ' ', $post->type ) );
+                    $plural = strpos( $name, ' ' ) === false ? $name.'s' : $name;
+                    $registry['labels'] = [
+                        'name'               => $plural,
+                        'singular_name'      => $name,
+                        'menu_name'          => $plural,
+                        'name_admin_bar'     => $name,
+                        'add_new_item'       => sprintf( 'Add New %s', $name ),
+                        'new_item'           => sprintf( 'New %s', $name ),
+                        'edit_item'          => sprintf( 'Edit %s', $name ),
+                        'view_item'          => sprintf( 'View %s', $name ),
+                        'all_items'          => sprintf( 'All %s', $plural ),
+                        'search_items'       => sprintf( 'Search %s', $plural ),
+                        'parent_item_colon'  => sprintf( 'Parent %s', $plural ),
+                        'not_found'          => sprintf( 'No %s found.', strtolower( $plural ) ),
+                        'not_found_in_trash' => sprintf( 'No %s found in Trash.', strtolower( $plural ) ),
+                    ];
+                } else {
+                    $registry['labels'] = $post->registry_labels;
+                }
+                $registry['supports'] = $post->registry_supports;
+                if ( empty( $post->registry_rewrite ) ) {
+                    $slug = strtolower(preg_replace('/\_/', '-', $post->type));
+                    $registry['rewrite'] = [
+                        'slug' => strtolower(preg_replace('/\_/', '-', $post->type)),
+                    ];
+                } else {
+                    $registry['rewrite'] = $post->registry_rewrite;
+                }
+                // Register
+                register_post_type( $post->type, $registry );
             }
             if ( $post->registry_metabox ) {
                 // Add save action once
@@ -464,14 +470,12 @@ abstract class Bridge implements Plugable
                     }
                 }
                 // Add post
-                $registry['register_meta_box_cb'] = [ &$this, '_metabox_'.$post->type ];
                 $this->_automatedModels[] = $post;
+                // Hook save_post
                 if ( $addAction )
                     add_action( 'save_post', [ &$this, '_save_'.$post->type ] );
                 unset( $addAction );
             }
-            // Register
-            register_post_type( $post->type, $registry );
             // Register taxonomies
             if ( !empty( $post->registry_taxonomies ) ) {
                 foreach ( $post->registry_taxonomies as $taxonomy => $args ) {
@@ -481,6 +485,8 @@ abstract class Bridge implements Plugable
                 }
             }
         }
+        // Metabox hook
+        add_action( 'add_meta_boxes', [ &$this, '_metabox' ] );
     }
 
     /**
@@ -560,19 +566,20 @@ abstract class Bridge implements Plugable
     /**
      * Addes automated wordpress metaboxes based on post type.
      * @since 2.0.4
-     *
-     * @param string $type Post type.
+     * @since 2.0.7 Parameter removed and code refactored.
      */
-    private function _metaboxes( $type )
+    private function _metaboxes()
     {
         // Metaboxes
         for ( $i = count( $this->_automatedModels )-1; $i >= 0; --$i ) {
-            if ( $this->_automatedModels[$i]->type == trim( $type ) )
+            if ( $this->_automatedModels[$i]->registry_metabox
+                && count( $this->_automatedModels[$i]->registry_metabox ) > 1
+            )
                 add_meta_box(
                     '_wpmvc_'.uniqid(),
                     $this->_automatedModels[$i]->registry_metabox['title'],
                     [ &$this, '_c_void_'.$this->_automatedModels[$i]->registry_controller.'@_metabox' ],
-                    $type,
+                    $this->_automatedModels[$i]->type,
                     $this->_automatedModels[$i]->registry_metabox['context'],
                     $this->_automatedModels[$i]->registry_metabox['priority']
                 );
