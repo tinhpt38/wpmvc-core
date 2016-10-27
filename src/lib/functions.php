@@ -57,7 +57,7 @@ if ( ! function_exists( 'resize_image' ) ) {
     }
 }
 
-if ( ! function_exists( 'asset_url' ) ) {
+if ( ! function_exists( 'assets_url' ) ) {
     /**
      * Returns url of asset located in a theme or plugin.
      * @since 1.0.1
@@ -68,7 +68,7 @@ if ( ! function_exists( 'asset_url' ) ) {
      *
      * @return string URL
      */
-    function asset_url( $path, $file )
+    function assets_url( $path, $file )
     {
         // Preparation
         $route = preg_replace( '/\\\\/', '/', $file );
