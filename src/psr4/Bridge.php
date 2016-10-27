@@ -6,6 +6,7 @@ use WPMVC\Cache;
 use WPMVC\Log;
 use WPMVC\Contracts\Plugable;
 use WPMVC\MVC\Engine;
+use TenQuality\WP\File;
 use Exception;
 
 /**
@@ -79,6 +80,13 @@ abstract class Bridge implements Plugable
     protected $models;
 
     /**
+     * List of assets to register or enqueue.
+     * @var array
+     * @since 2.0.7
+     */
+    protected $assets;
+
+    /**
      * List of Models that requires bridge processing to function.
      * @var array
      * @since 2.0.4
@@ -90,6 +98,7 @@ abstract class Bridge implements Plugable
      * @since 1.0.0
      * @since 2.0.3 Cache and log are obligatory configuration settings.
      * @since 2.0.4 Added models.
+     * @since 2.0.7 Added assets.
      *
      * @param array $config Configuration options.
      */
@@ -100,6 +109,7 @@ abstract class Bridge implements Plugable
         $this->shortcodes = [];
         $this->widgets = [];
         $this->models = [];
+        $this->assets = [];
         $this->_automatedModels = [];
         $this->config = $config;
         $this->mvc = new Engine(
@@ -111,6 +121,7 @@ abstract class Bridge implements Plugable
         $this->set_addons();
         Cache::init( $this->config );
         Log::init( $this->config );
+        $this->checkAssets();
     }
 
     /**
@@ -355,9 +366,31 @@ abstract class Bridge implements Plugable
     }
 
     /**
+     * Adds an asset for registration.
+     * @since 2.0.7
+     *
+     * @param string $asset   Asset relative path (within assets forlder).
+     * @param bool   $enqueue Flag that indicates if asset should be enqueued upon registration.
+     * @param array  $dep     Dependencies.
+     * @param bool   $footer  Flag that indicates if asset should enqueue at page footer.
+     */
+    public function add_asset( $asset, $enqueue = true, $dep = [], $footer = null )
+    {
+        if ( $footer === null )
+            $footer = preg_match( '/\.js/', $asset );
+        $this->assets[] = [
+            'path'      => $asset,
+            'enqueue'   => $enqueue,
+            'dep'       => $dep,
+            'footer'    => $footer,
+        ];
+    }
+
+    /**
      * Adds hooks and filters into Wordpress core.
      * @since 1.0.3
      * @since 2.0.4 Added models.
+     * @since 2.0.7 Added assets.
      */
     public function add_hooks()
     {
@@ -397,6 +430,10 @@ abstract class Bridge implements Plugable
             // Models
             if ( count( $this->models ) > 0 ) {
                 add_action( 'init', [ &$this, '_models' ], 1 );
+            }
+            // Assets
+            if ( count( $this->assets ) > 0 ) {
+                add_action( 'wp_enqueue_scripts', [ &$this, '_assets' ], 10 );
             }
         }
     }
@@ -487,6 +524,53 @@ abstract class Bridge implements Plugable
         }
         // Metabox hook
         add_action( 'add_meta_boxes', [ &$this, '_metabox' ] );
+    }
+
+    /**
+     * Enqueues assets registered in class.
+     * @since 2.0.7
+     */
+    public function _assets()
+    {
+        $version = $this->config->get('version') ? $this->config->get('version') : '1.0.0';
+        foreach ( $this->assets as $asset ) {
+            $name = strtolower( preg_replace( '/css|js|\/|\.min|\./', '', $asset['path'] ) )
+                .'-'.strtolower( $this->config->get('namespace') );
+            // Styles
+            if ( preg_match( '/\.css/', $asset['path'] ) ) {
+                wp_register_style(
+                    $name,
+                    assets_url( $asset['path'], __DIR__ ),
+                    $asset['dep'],
+                    $version
+                );
+                if ($asset['enqueue'])
+                    wp_enqueue_style(
+                        $name,
+                        assets_url( $asset['path'], __DIR__ ),
+                        $asset['dep'],
+                        $version,
+                        $asset['footer']
+                    );
+            }
+            // Scripts
+            if ( preg_match( '/\.js/', $asset['path'] ) ) {
+                wp_register_script(
+                    $name,
+                    assets_url( $asset['path'], __DIR__ ),
+                    $asset['dep'],
+                    $version
+                );
+                if ($asset['enqueue'])
+                    wp_enqueue_scripts(
+                        $name,
+                        assets_url( $asset['path'], __DIR__ ),
+                        $asset['dep'],
+                        $version,
+                        $asset['footer']
+                    );
+            }
+        }
     }
 
     /**
@@ -606,6 +690,23 @@ abstract class Bridge implements Plugable
                     $this->_automatedModels[$i]->registry_controller.'@_save',
                     $args
                 );
+        }
+    }
+
+    /**
+     * Checks if generated assets exist or not.
+     * @since 2.0.7
+     */
+    private function checkAssets()
+    {
+        if ( $this->config->get( 'autoenqueue' )
+            && $this->config->get( 'autoenqueue' ) === true
+        ) {
+            $file = File::auth();
+            if ( $file->exists( assets_path( 'js/app.js', __DIR__ ) ) )
+                $this->add_asset( 'js/app.js' );
+            if ( $file->exists( assets_path( 'css/app.css', __DIR__ ) ) )
+                $this->add_asset( 'css/app.css' );
         }
     }
 }

@@ -14,7 +14,7 @@ use WPMVC\Commands\CreateCommand;
  * @copyright 10Quality <http://www.10quality.com>
  * @license MIT
  * @package WPMVC
- * @version 2.0.4
+ * @version 2.0.7
  */
 
 if ( ! function_exists( 'resize_image' ) ) {
@@ -77,6 +77,8 @@ if ( ! function_exists( 'assets_url' ) ) {
         $route = preg_replace( '/.+?(?=wp-content)/', '', $route );
         // Clean project relative path
         $route = preg_replace( '/\/app[\/\\A-Za-z0-9\.\\-]+/', '', $route );
+        $route = preg_replace( '/\/assets[\/\\A-Za-z0-9\.\\-]+/', '', $route );
+        $route = preg_replace( '/\/vendor[\/\\A-Za-z0-9\.\\-]+/', '', $route );
         return $url.'/'.apply_filters( 'app_route', $route ).'/assets/'.$path;
     }
 }
@@ -118,5 +120,31 @@ if ( ! function_exists( 'get_wp_home_path' ) )
         return function_exists( 'get_home_path' )
             ? get_home_path()
             : preg_replace( '/wp-content[A-Za-z0-9\.\-\\\_]+/', '', __DIR__ );
+    }
+}
+
+if ( ! function_exists( 'assets_path' ) ) {
+    /**
+     * Returns path of asset located in a theme or plugin.
+     * @since 1.0.1
+     * @since 2.0.4 Refactored to work with new structure.
+     *
+     * @param string  $relative Asset relative path.
+     * @param string  $file     File location path.
+     *
+     * @return string URL
+     */
+    function assets_path( $relative, $file )
+    {
+        // Preparation
+        $route = preg_replace( '/\\\\/', '/', $file );
+        $path = rtrim( preg_replace( '/\\\\/', '/', get_home_path() ), '/' );
+        // Clean base path
+        $route = preg_replace( '/.+?(?=wp-content)/', '', $route );
+        // Clean project relative path
+        $route = preg_replace( '/\/app[\/\\A-Za-z0-9\.\\-]+/', '', $route );
+        $route = preg_replace( '/\/assets[\/\\A-Za-z0-9\.\\-]+/', '', $route );
+        $route = preg_replace( '/\/vendor[\/\\A-Za-z0-9\.\\-]+/', '', $route );
+        return $path.'/'.apply_filters( 'app_route_path', $route ).'/assets/'.$relative;
     }
 }
