@@ -19,7 +19,7 @@ use Exception;
  * @copyright 10Quality <http://www.10quality.com>
  * @license MIT
  * @package WPMVC
- * @version 2.0.7
+ * @version 2.0.8
  */
 abstract class Bridge implements Plugable
 {
@@ -529,6 +529,7 @@ abstract class Bridge implements Plugable
     /**
      * Enqueues assets registered in class.
      * @since 2.0.7
+     * @since 2.0.8 Bug fix.
      */
     public function _assets()
     {
@@ -562,7 +563,7 @@ abstract class Bridge implements Plugable
                     $version
                 );
                 if ($asset['enqueue'])
-                    wp_enqueue_scripts(
+                    wp_enqueue_script(
                         $name,
                         assets_url( $asset['path'], __DIR__ ),
                         $asset['dep'],
@@ -696,17 +697,23 @@ abstract class Bridge implements Plugable
     /**
      * Checks if generated assets exist or not.
      * @since 2.0.7
+     * @since 2.0.8 Refactor based on new config file.
      */
     private function checkAssets()
     {
-        if ( $this->config->get( 'autoenqueue' )
-            && $this->config->get( 'autoenqueue' ) === true
+        if ( $this->config->get( 'autoenqueue.enabled' )
+            && $this->config->get( 'autoenqueue.enabled' ) === true
         ) {
             $file = File::auth();
-            if ( $file->exists( assets_path( 'js/app.js', __DIR__ ) ) )
-                $this->add_asset( 'js/app.js' );
-            if ( $file->exists( assets_path( 'css/app.css', __DIR__ ) ) )
-                $this->add_asset( 'css/app.css' );
+            foreach ( $this->config->get( 'autoenqueue.assets' ) as $asset ) {
+                if ( $file->exists( assets_path( $asset['asset'], __DIR__ ) ) )
+                    $this->add_asset(
+                        $asset['asset'],
+                        true,
+                        $asset['dep'],
+                        $asset['footer']
+                    );
+            }
         }
     }
 }
