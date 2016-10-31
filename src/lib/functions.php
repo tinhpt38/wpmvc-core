@@ -119,7 +119,7 @@ if ( ! function_exists( 'get_wp_home_path' ) )
     {
         return function_exists( 'get_home_path' )
             ? get_home_path()
-            : preg_replace( '/wp-content[A-Za-z0-9\.\-\\\_]+/', '', __DIR__ );
+            : preg_replace( '/wp-content[\s\S]+/', '', __DIR__ );
     }
 }
 
