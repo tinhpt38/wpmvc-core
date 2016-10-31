@@ -19,7 +19,7 @@ use Exception;
  * @copyright 10Quality <http://www.10quality.com>
  * @license MIT
  * @package WPMVC
- * @version 2.0.8
+ * @version 2.0.9
  */
 abstract class Bridge implements Plugable
 {
@@ -674,12 +674,14 @@ abstract class Bridge implements Plugable
     /**
      * Addes automated wordpress save post functionality.
      * @since 2.0.4
+     * @since 2.0.9 Fix for multiple types calling to function.
      *
      * @param string $type Post type.
      * @param array  $args Hooks arguments.
      */
     private function _save( $type, $args )
     {
+        if ( get_post_type( $args[0] ) !== $type ) return;
         // Check nonce
         $nonce = Request::input( '_wpmvc_nonce', '', true );
         if ( empty( $nonce ) || !wp_verify_nonce( $nonce, '_wpmvc_post' ) )
