@@ -14,7 +14,7 @@ use WPMVC\Commands\CreateCommand;
  * @copyright 10Quality <http://www.10quality.com>
  * @license MIT
  * @package WPMVC
- * @version 2.0.7
+ * @version 2.0.10
  */
 
 if ( ! function_exists( 'resize_image' ) ) {
@@ -112,6 +112,7 @@ if ( ! function_exists( 'get_wp_home_path' ) )
     /**
      * Returns wordpress root path.
      * @since 2.0.4
+     * @since 2.0.10 Force file update on repository.
      *
      * @return string
      */
