@@ -19,7 +19,7 @@ use Exception;
  * @copyright 10Quality <http://www.10quality.com>
  * @license MIT
  * @package WPMVC
- * @version 2.0.9
+ * @version 2.0.12
  */
 abstract class Bridge implements Plugable
 {
@@ -530,6 +530,7 @@ abstract class Bridge implements Plugable
      * Enqueues assets registered in class.
      * @since 2.0.7
      * @since 2.0.8 Bug fix.
+     * @since 2.0.12 Dir __DIR__ checked on config.
      */
     public function _assets()
     {
@@ -703,6 +704,7 @@ abstract class Bridge implements Plugable
      * Checks if generated assets exist or not.
      * @since 2.0.7
      * @since 2.0.8 Refactor based on new config file.
+     * @since 2.0.12 Dir __DIR__ checked on config.
      */
     private function checkAssets()
     {
