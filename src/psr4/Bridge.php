@@ -534,6 +534,9 @@ abstract class Bridge implements Plugable
     public function _assets()
     {
         $version = $this->config->get('version') ? $this->config->get('version') : '1.0.0';
+        $dir = $this->config->get( 'paths.base' )
+            ? $this->config->get( 'paths.base' )
+            : __DIR__;
         foreach ( $this->assets as $asset ) {
             $name = strtolower( preg_replace( '/css|js|\/|\.min|\./', '', $asset['path'] ) )
                 .'-'.strtolower( $this->config->get('namespace') );
@@ -541,14 +544,14 @@ abstract class Bridge implements Plugable
             if ( preg_match( '/\.css/', $asset['path'] ) ) {
                 wp_register_style(
                     $name,
-                    assets_url( $asset['path'], __DIR__ ),
+                    assets_url( $asset['path'], $dir ),
                     $asset['dep'],
                     $version
                 );
                 if ($asset['enqueue'])
                     wp_enqueue_style(
                         $name,
-                        assets_url( $asset['path'], __DIR__ ),
+                        assets_url( $asset['path'], $dir ),
                         $asset['dep'],
                         $version,
                         $asset['footer']
@@ -558,14 +561,14 @@ abstract class Bridge implements Plugable
             if ( preg_match( '/\.js/', $asset['path'] ) ) {
                 wp_register_script(
                     $name,
-                    assets_url( $asset['path'], __DIR__ ),
+                    assets_url( $asset['path'], $dir ),
                     $asset['dep'],
                     $version
                 );
                 if ($asset['enqueue'])
                     wp_enqueue_script(
                         $name,
-                        assets_url( $asset['path'], __DIR__ ),
+                        assets_url( $asset['path'], $dir ),
                         $asset['dep'],
                         $version,
                         $asset['footer']
@@ -707,8 +710,11 @@ abstract class Bridge implements Plugable
             && $this->config->get( 'autoenqueue.enabled' ) === true
         ) {
             $file = File::auth();
+            $dir = $this->config->get( 'paths.base' )
+                ? $this->config->get( 'paths.base' )
+                : __DIR__;
             foreach ( $this->config->get( 'autoenqueue.assets' ) as $asset ) {
-                if ( $file->exists( assets_path( $asset['asset'], __DIR__ ) ) )
+                if ( $file->exists( assets_path( $asset['asset'], $dir ) ) )
                     $this->add_asset(
                         $asset['asset'],
                         true,
