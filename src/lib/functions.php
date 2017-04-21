@@ -89,7 +89,7 @@ if ( ! function_exists( 'get_ayuco' ) ) {
      * Returns ayuco.
      * @since 2.0.3
      * @since 2.0.4 Added new commands.
-     * @since 2.0.12 Added SetCommand and sorts registration by name.
+     * @since 2.0.13 Added SetCommand and sorts registration by name.
      *
      * @param string $path Project path.
      *
