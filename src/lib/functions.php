@@ -6,6 +6,7 @@ use WPMVC\Commands\SetupCommand;
 use WPMVC\Commands\AddCommand;
 use WPMVC\Commands\RegisterCommand;
 use WPMVC\Commands\CreateCommand;
+use WPMVC\Commands\SetCommand;
 
 /**
  * CORE wordpress functions.
@@ -14,7 +15,7 @@ use WPMVC\Commands\CreateCommand;
  * @copyright 10Quality <http://www.10quality.com>
  * @license MIT
  * @package WPMVC
- * @version 2.0.10
+ * @version 2.0.13
  */
 
 if ( ! function_exists( 'resize_image' ) ) {
@@ -88,6 +89,7 @@ if ( ! function_exists( 'get_ayuco' ) ) {
      * Returns ayuco.
      * @since 2.0.3
      * @since 2.0.4 Added new commands.
+     * @since 2.0.12 Added SetCommand and sorts registration by name.
      *
      * @param string $path Project path.
      *
@@ -97,11 +99,12 @@ if ( ! function_exists( 'get_ayuco' ) ) {
     {
         $ayuco = new Listener();
 
-        $ayuco->register(new SetNameCommand($path));
-        $ayuco->register(new SetupCommand($path));
         $ayuco->register(new AddCommand($path));
-        $ayuco->register(new RegisterCommand($path));
         $ayuco->register(new CreateCommand($path));
+        $ayuco->register(new RegisterCommand($path));
+        $ayuco->register(new SetCommand($path));
+        $ayuco->register(new SetupCommand($path));
+        $ayuco->register(new SetNameCommand($path));
 
         return $ayuco;
     }
