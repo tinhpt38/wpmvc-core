@@ -15,7 +15,7 @@ use WPMVC\Commands\SetCommand;
  * @copyright 10Quality <http://www.10quality.com>
  * @license MIT
  * @package WPMVC
- * @version 2.0.14
+ * @version 2.0.15
  */
 
 if ( ! function_exists( 'resize_image' ) ) {
@@ -60,17 +60,25 @@ if ( ! function_exists( 'assets_url' ) ) {
      * Returns url of asset located in a theme or plugin.
      * @since 1.0.1
      * @since 2.0.4 Refactored to work with new structure.
+     * @since 2.0.15 Added scheme as paramete and network support.
      *
-     * @param string  $path Asset relative path.
-     * @param string  $file File location path.
+     * @link https://codex.wordpress.org/Function_Reference/home_url
+     * @link https://codex.wordpress.org/Function_Reference/network_home_url
+     * @param string $path       Asset relative path.
+     * @param string $file       File location path.
+     * @param string $scheme     Scheme to give the home url context. Currently 'http','https'.
+     * @param bool   $is_network Flag that indicates if base url should be retrieved from a network setup.
      *
      * @return string URL
      */
-    function assets_url( $path, $file )
+    function assets_url( $path, $file, $scheme = null, $is_network = false )
     {
         // Preparation
         $route = preg_replace( '/\\\\/', '/', $file );
-        $url = apply_filters( 'asset_base_url', rtrim( home_url( '/' ), '/' ) );
+        $url = apply_filters(
+            'asset_base_url',
+            rtrim( $is_network ? network_home_url( '/', $scheme ) : home_url( '/', $scheme ), '/' )
+        );
         // Clean base path
         $route = preg_replace( '/.+?(?=wp-content)/', '', $route );
         // Clean project relative path
