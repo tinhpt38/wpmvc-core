@@ -19,7 +19,7 @@ use Exception;
  * @copyright 10Quality <http://www.10quality.com>
  * @license MIT
  * @package WPMVC
- * @version 2.0.12
+ * @version 2.0.16
  */
 abstract class Bridge implements Plugable
 {
@@ -656,12 +656,14 @@ abstract class Bridge implements Plugable
      * Addes automated wordpress metaboxes based on post type.
      * @since 2.0.4
      * @since 2.0.7 Parameter removed and code refactored.
+     * @since 2.0.16 Fixes count() warning.
      */
     private function _metaboxes()
     {
         // Metaboxes
         for ( $i = count( $this->_automatedModels )-1; $i >= 0; --$i ) {
             if ( $this->_automatedModels[$i]->registry_metabox
+                && is_array( $this->_automatedModels[$i]->registry_metabox )
                 && count( $this->_automatedModels[$i]->registry_metabox ) > 1
             )
                 add_meta_box(
