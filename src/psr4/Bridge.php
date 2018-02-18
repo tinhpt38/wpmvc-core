@@ -203,6 +203,8 @@ abstract class Bridge implements Plugable
             $this->_save( preg_replace( '/^\_save\_/', '', $method ), $args );
         } else if ( preg_match( '/^\_metabox/', $method ) ) {
             $this->_metaboxes();
+        } else if ( preg_match( '/^\_registry_supports\_/', $method ) ) {
+            $this->_registry_supports( preg_replace( '/^\_registry_supports\_/', '', $method ), $args );
         } else {
             return call_user_func_array( [ $this, $method ], $args );
         }
@@ -453,6 +455,7 @@ abstract class Bridge implements Plugable
      * Registers added models into Wordpress.
      * @since 2.0.4
      * @since 2.0.7 Support for automated models with no registration.
+     * @since 2.0.16 Registry supports
      */
     public function _models()
     {
@@ -496,6 +499,8 @@ abstract class Bridge implements Plugable
                 }
                 // Register
                 register_post_type( $post->type, $registry );
+            } else if ( ! empty( $post->registry_supports ) ) {
+                add_action( 'admin_init', [ &$this, '_registry_supports_'.$post->type ] );
             }
             if ( $post->registry_metabox ) {
                 // Add save action once
@@ -726,6 +731,21 @@ abstract class Bridge implements Plugable
                         $asset['footer']
                     );
             }
+        }
+    }
+
+    /**
+     * Registers post type supports for models with no post type registration.
+     * @since 2.0.16
+     *
+     * @param string $type Post type.
+     * @param array  $args Hook arguments.
+     */
+    private function _registry_supports( $type, $args )
+    {
+        for ( $i = count( $this->models )-1; $i >= 0; --$i ) {
+            if ( $this->models[$i]->type === $type )
+                add_post_type_support( $type, $this->models[$i]->registry_supports );
         }
     }
 }
