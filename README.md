@@ -17,4 +17,4 @@ The coding is a mix between PSR-2 and Wordpress PHP guidelines.
 
 **WPMVC** is free software distributed under the terms of the MIT license.
 
-Copyright (c) 2016 [10 Quality](http://www.10quality.com/).
+Copyright (c) 2016-2018 [10 Quality](http://www.10quality.com/).
