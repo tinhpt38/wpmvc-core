@@ -14,7 +14,7 @@ use WPMVC\MVC\Engine;
  * @copyright 10Quality <http://www.10quality.com>
  * @license MIT
  * @package WPMVC
- * @version 1.0.0
+ * @version 3.0.0
  */
 abstract class Addon implements Plugable
 {
@@ -35,16 +35,19 @@ abstract class Addon implements Plugable
     /**
      * Default constructor.
      * @since 1.0.0
+     * @since 3.0.0 Main as reference, new addon MVC location.
+     *
+     * @see https://github.com/10quality/wpmvc-addon-template
      *
      * @param object $main Plugin object.
      */
-    public function __construct( $main )
+    public function __construct( &$main )
     {
-        $reflection = new ReflectionClass($this);
+        $reflection = new ReflectionClass( $this );
         $this->main = $main;
         $this->mvc = new Engine(
-            dirname( $reflection->getFileName() ) . '/views/',
-            dirname( $reflection->getFileName() ) . '/controllers/',
+            dirname( $reflection->getFileName() ) . '/assets/views/',
+            dirname( $reflection->getFileName() ) . '/addon/Controllers/',
             $reflection->getNamespaceName()
         );
     }
