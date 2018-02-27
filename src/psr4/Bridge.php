@@ -150,6 +150,7 @@ abstract class Bridge implements Plugable
      * @since 1.0.3 Added MVC controller and views direct calls.
      * @since 2.0.4 Added metabox generation.
      * @since 2.0.7 Metabox refactored.
+     * @since 3.0.2 Returns addon method call.
      *
      * @return mixed
      */
@@ -160,8 +161,7 @@ abstract class Bridge implements Plugable
             // Search addons
             for ( $i = count( $this->addons ) - 1; $i >= 0; --$i ) {
                 if ( method_exists( $this->addons[$i], $method ) ) {
-                    call_user_func_array( [ $this->addons[$i], $method ], $args );
-                    break;
+                    return call_user_func_array( [ $this->addons[$i], $method ], $args );
                 }
             }
         } else if ( preg_match( '/^\_c\_/', $method ) ) {
