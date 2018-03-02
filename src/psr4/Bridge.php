@@ -19,7 +19,7 @@ use Exception;
  * @copyright 10Quality <http://www.10quality.com>
  * @license MIT
  * @package WPMVC
- * @version 2.0.16
+ * @version 3.0.4
  */
 abstract class Bridge implements Plugable
 {
@@ -100,6 +100,7 @@ abstract class Bridge implements Plugable
      * @since 2.0.4 Added models.
      * @since 2.0.7 Added assets.
      * @since 3.0.3 Added views alternative relative theme's path.
+     * @since 3.0.4 Typo comma fix.
      *
      * @param array $config Configuration options.
      */
@@ -116,8 +117,8 @@ abstract class Bridge implements Plugable
         $this->mvc = new Engine(
             $this->config->get( 'paths.views' ),
             $this->config->get( 'paths.controllers' ),
-            $this->config->get( 'namespace' )
-            $this->config->get( 'paths.theme_path' ),
+            $this->config->get( 'namespace' ),
+            $this->config->get( 'paths.theme_path' )
         );
         $this->addons = array();
         $this->set_addons();
