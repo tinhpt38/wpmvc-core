@@ -15,7 +15,7 @@ use WPMVC\Commands\SetCommand;
  * @copyright 10Quality <http://www.10quality.com>
  * @license MIT
  * @package WPMVC
- * @version 2.0.15
+ * @version 3.0.5
  */
 
 if ( ! function_exists( 'resize_image' ) ) {
@@ -121,14 +121,22 @@ if ( ! function_exists( 'get_wp_home_path' ) )
      * Returns wordpress root path.
      * @since 2.0.4
      * @since 2.0.10 Force file update on repository.
+     * @since 3.0.5 Added filters to support path customization. 
      *
      * @return string
      */
     function get_wp_home_path()
     {
-        return function_exists( 'get_home_path' )
-            ? get_home_path()
-            : preg_replace( '/wp-content[\s\S]+/', '', __DIR__ );
+        return apply_filters(
+            'home_path',
+            function_exists( 'get_home_path' )
+                ? apply_filters( 'get_home_path', get_home_path() )
+                : preg_replace(
+                    apply_filters( 'wpmvc_home_path_regex_rule', '/wp-content[\s\S]+/' ),
+                    apply_filters( 'wpmvc_home_path_regex_replacement', '' ),
+                    __DIR__
+                )
+        );
     }
 }
 
@@ -137,6 +145,7 @@ if ( ! function_exists( 'assets_path' ) ) {
      * Returns path of asset located in a theme or plugin.
      * @since 1.0.1
      * @since 2.0.4 Refactored to work with new structure.
+     * @since 3.0.5 Uses get_wp_home_path instead.
      *
      * @param string  $relative Asset relative path.
      * @param string  $file     File location path.
@@ -147,7 +156,7 @@ if ( ! function_exists( 'assets_path' ) ) {
     {
         // Preparation
         $route = preg_replace( '/\\\\/', '/', $file );
-        $path = rtrim( preg_replace( '/\\\\/', '/', get_home_path() ), '/' );
+        $path = rtrim( preg_replace( '/\\\\/', '/', get_wp_home_path() ), '/' );
         // Clean base path
         $route = preg_replace( '/.+?(?=wp-content)/', '', $route );
         // Clean project relative path
