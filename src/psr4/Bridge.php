@@ -4,6 +4,7 @@ namespace WPMVC;
 
 use WPMVC\Cache;
 use WPMVC\Log;
+use WPMVC\Resolver;
 use WPMVC\Contracts\Plugable;
 use WPMVC\MVC\Engine;
 use TenQuality\WP\File;
@@ -19,7 +20,7 @@ use Exception;
  * @copyright 10Quality <http://www.10quality.com>
  * @license MIT
  * @package WPMVC
- * @version 3.0.4
+ * @version 3.1.0
  */
 abstract class Bridge implements Plugable
 {
@@ -101,6 +102,7 @@ abstract class Bridge implements Plugable
      * @since 2.0.7 Added assets.
      * @since 3.0.3 Added views alternative relative theme's path.
      * @since 3.0.4 Typo comma fix.
+     * @since 3.1.0 Chages the way cache, log and assets are loaded.
      *
      * @param array $config Configuration options.
      */
@@ -120,11 +122,36 @@ abstract class Bridge implements Plugable
             $this->config->get( 'namespace' ),
             $this->config->get( 'paths.theme_path' )
         );
-        $this->addons = array();
-        $this->set_addons();
+        $this->addons = [];
+        // Init
+        add_action(
+            $this->config->get( 'type' ) === 'theme' ? 'after_setup_theme' : 'plugins_loaded',
+            [ &$this, '_init' ],
+            1
+        );
+        // Resolver
+        Resolver::add(
+            $this->config->get( 'type' ) === 'theme' ? 'theme' : $this->config->get( 'namespace' ),
+            $this
+        );
+    }
+
+    /**
+     * Inits framework.
+     * @since 3.1.0
+     */
+    public function _init()
+    {
         Cache::init( $this->config );
         Log::init( $this->config );
-        $this->checkAssets();
+        $this->set_addons();
+        $this->_check_assets();
+        $this->_localize();
+        // Hooks
+        $this->autoload_init();
+        if ( is_admin() )
+            $this->autoload_on_admin();
+        $this->add_hooks();
     }
 
     /**
@@ -374,12 +401,13 @@ abstract class Bridge implements Plugable
      * Adds an asset for registration.
      * @since 2.0.7
      *
-     * @param string $asset   Asset relative path (within assets forlder).
-     * @param bool   $enqueue Flag that indicates if asset should be enqueued upon registration.
-     * @param array  $dep     Dependencies.
-     * @param bool   $footer  Flag that indicates if asset should enqueue at page footer.
+     * @param string $asset    Asset relative path (within assets forlder).
+     * @param bool   $enqueue  Flag that indicates if asset should be enqueued upon registration.
+     * @param array  $dep      Dependencies.
+     * @param bool   $footer   Flag that indicates if asset should enqueue at page footer.
+     * @param bool   $is_admin Flag that indicates if asset should be enqueue on admin.
      */
-    public function add_asset( $asset, $enqueue = true, $dep = [], $footer = null )
+    public function add_asset( $asset, $enqueue = true, $dep = [], $footer = null, $is_admin = false )
     {
         if ( $footer === null )
             $footer = preg_match( '/\.js/', $asset );
@@ -388,6 +416,7 @@ abstract class Bridge implements Plugable
             'enqueue'   => $enqueue,
             'dep'       => $dep,
             'footer'    => $footer,
+            'is_admin'  => $is_admin,
         ];
     }
 
@@ -439,6 +468,9 @@ abstract class Bridge implements Plugable
             // Assets
             if ( count( $this->assets ) > 0 ) {
                 add_action( 'wp_enqueue_scripts', [ &$this, '_assets' ], 10 );
+                if ( is_admin() ) {
+                    add_action( 'admin_enqueue_scripts', [ &$this, '_admin_assets' ], 10 );
+                }
             }
         }
     }
@@ -539,6 +571,7 @@ abstract class Bridge implements Plugable
      * @since 2.0.7
      * @since 2.0.8 Bug fix.
      * @since 2.0.12 Dir __DIR__ checked on config.
+     * @since 3.1.0 Doesn't load admin assets.
      */
     public function _assets()
     {
@@ -547,6 +580,58 @@ abstract class Bridge implements Plugable
             ? $this->config->get( 'paths.base' )
             : __DIR__;
         foreach ( $this->assets as $asset ) {
+            if ( isset( $asset['is_admin'] ) && $asset['is_admin'] ) continue;
+            $name = strtolower( preg_replace( '/css|js|\/|\.min|\./', '', $asset['path'] ) )
+                .'-'.strtolower( $this->config->get('namespace') );
+            // Styles
+            if ( preg_match( '/\.css/', $asset['path'] ) ) {
+                wp_register_style(
+                    $name,
+                    assets_url( $asset['path'], $dir ),
+                    $asset['dep'],
+                    $version
+                );
+                if ($asset['enqueue'])
+                    wp_enqueue_style(
+                        $name,
+                        assets_url( $asset['path'], $dir ),
+                        $asset['dep'],
+                        $version,
+                        $asset['footer']
+                    );
+            }
+            // Scripts
+            if ( preg_match( '/\.js/', $asset['path'] ) ) {
+                wp_register_script(
+                    $name,
+                    assets_url( $asset['path'], $dir ),
+                    $asset['dep'],
+                    $version
+                );
+                if ($asset['enqueue'])
+                    wp_enqueue_script(
+                        $name,
+                        assets_url( $asset['path'], $dir ),
+                        $asset['dep'],
+                        $version,
+                        $asset['footer']
+                    );
+            }
+        }
+    }
+
+    /**
+     * Enqueues admin assets registered in class.
+     * @since 3.1.0
+     */
+    public function _admin_assets()
+    {
+        $version = $this->config->get('version') ? $this->config->get('version') : '1.0.0';
+        $dir = $this->config->get( 'paths.base' )
+            ? $this->config->get( 'paths.base' )
+            : __DIR__;
+        foreach ( $this->assets as $asset ) {
+            if ( ! isset( $asset['is_admin'] ) || ! $asset['is_admin'] ) continue;
             $name = strtolower( preg_replace( '/css|js|\/|\.min|\./', '', $asset['path'] ) )
                 .'-'.strtolower( $this->config->get('namespace') );
             // Styles
@@ -715,8 +800,9 @@ abstract class Bridge implements Plugable
      * @since 2.0.7
      * @since 2.0.8 Refactor based on new config file.
      * @since 2.0.12 Dir __DIR__ checked on config.
+     * @since 3.1.0 Refactors name and allows for admin enqueues.
      */
-    private function checkAssets()
+    private function _check_assets()
     {
         if ( $this->config->get( 'autoenqueue.enabled' )
             && $this->config->get( 'autoenqueue.enabled' ) === true
@@ -729,9 +815,10 @@ abstract class Bridge implements Plugable
                 if ( $file->exists( assets_path( $asset['asset'], $dir ) ) )
                     $this->add_asset(
                         $asset['asset'],
-                        true,
+                        isset( $asset['enqueue'] ) ? $asset['enqueue'] : true,
                         $asset['dep'],
-                        $asset['footer']
+                        $asset['footer'],
+                        isset( $asset['is_admin'] ) ? $asset['is_admin'] : false
                     );
             }
         }
@@ -749,6 +836,34 @@ abstract class Bridge implements Plugable
         for ( $i = count( $this->models )-1; $i >= 0; --$i ) {
             if ( $this->models[$i]->type === $type )
                 add_post_type_support( $type, $this->models[$i]->registry_supports );
+        }
+    }
+
+    /**
+     * Loads localization.
+     * @since 3.1.0
+     */
+    private function _localize()
+    {
+        if ( $this->config->get( 'localize.enabled' )
+            && $this->config->get( 'localize.enabled' ) === true
+        ) {
+            $domain = $this->config->get( 'localize.textdomain' );
+            $locale = apply_filters(
+                'plugin_locale',
+                function_exists( 'get_user_locale' ) ? get_user_locale() : get_locale(),
+                $domain
+            );
+            if ( $this->config->get( 'localize.unload' ) )
+                unload_textdomain( $domain );
+            $filename = apply_filters(
+                'locale_filename',
+                $this->config->get( 'localize.is_public' )
+                    ? sprintf( '%s/%s/%s-%s.mo', WP_LANG_DIR, $domain, $domain, $locale )
+                    : sprintf( '%s%s-%s.mo', $this->config->get( 'localize.path' ), $domain, $locale )
+            );
+            if ( ! load_textdomain( $domain, $filename ) )
+                load_plugin_textdomain( $domain, false, $this->config->get( 'localize.path' ) );
         }
     }
 }

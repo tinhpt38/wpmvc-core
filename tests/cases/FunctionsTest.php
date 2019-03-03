@@ -1,4 +1,7 @@
 <?php
+
+use WPMVC\Resolver;
+
 /**
  * Tests global functions.
  *
@@ -6,7 +9,7 @@
  * @copyright 10Quality <http://www.10quality.com>
  * @license MIT
  * @package WPMVC\MVC
- * @version 3.0.5
+ * @version 3.1.0
  */
 class FunctionsTest extends PHPUnit_Framework_TestCase
 {
@@ -24,5 +27,27 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
     function testHomePathUrl()
     {
         $this->assertEquals('C:\\temp\\phpunit\\', get_wp_home_path());
+    }
+    function testExistsBridge()
+    {
+        $this->assertTrue(function_exists('exists_bridge'));
+        $this->assertFalse(exists_bridge('other'));
+    }
+    function testGetBridge()
+    {
+        // Prepare
+        $test = new stdClass;
+        $test->id = 7;
+        // Exec
+        Resolver::add('test', $test);
+        // Assert
+        $this->assertTrue(function_exists('get_bridge'));
+        $this->assertInstanceOf(stdClass::class, get_bridge('test'));
+        $this->assertNotNull(get_bridge('test'));
+        $this->assertEquals(7, get_bridge('test')->id);
+    }
+    function testThemeView()
+    {
+        $this->assertTrue(function_exists('theme_view'));
     }
 }

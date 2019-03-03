@@ -1,6 +1,7 @@
 <?php
 
 use Ayuco\Listener;
+use WPMVC\Resolver;
 use WPMVC\Commands\SetNameCommand;
 use WPMVC\Commands\SetupCommand;
 use WPMVC\Commands\AddCommand;
@@ -15,7 +16,7 @@ use WPMVC\Commands\SetCommand;
  * @copyright 10Quality <http://www.10quality.com>
  * @license MIT
  * @package WPMVC
- * @version 3.0.5
+ * @version 3.1.0
  */
 
 if ( ! function_exists( 'resize_image' ) ) {
@@ -164,5 +165,50 @@ if ( ! function_exists( 'assets_path' ) ) {
         $route = preg_replace( '/\/assets[\/\\A-Za-z0-9\.\\-]+/', '', $route );
         $route = preg_replace( '/\/vendor[\/\\A-Za-z0-9\.\\-]+/', '', $route );
         return $path.'/'.apply_filters( 'app_route_path', $route ).'/assets/'.$relative;
+    }
+}
+
+if ( ! function_exists( 'exists_bridge' ) ) {
+    /**
+     * Returns flag indicating if a bridge instace exists.
+     * @since 3.1.0
+     *
+     * @param string $namespace Namespace.
+     * 
+     * @return bool
+     */
+    function exists_bridge( $namespace )
+    {
+        return Resolver::exists( $namespace );
+    }
+}
+
+if ( ! function_exists( 'get_bridge' ) ) {
+    /**
+     * Returns a bridge.
+     * @since 3.1.0
+     *
+     * @param string $namespace Namespace.
+     * 
+     * @return WPMVC\Bridge|object
+     */
+    function get_bridge( $namespace )
+    {
+        return Resolver::get( $namespace );
+    }
+}
+
+if ( ! function_exists( 'theme_view' ) ) {
+    /**
+     * Prints / echos a view located in the theme.
+     * @since 3.1.0
+     *
+     * @param string $key    View key.
+     * @param array  $params View params.
+     */
+    function theme_view( $key, $params = [] )
+    {
+        if ( Resolver::exists( 'theme' ) )
+            Resolver::exists( 'theme' )->view( $key, $params );
     }
 }
