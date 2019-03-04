@@ -209,6 +209,6 @@ if ( ! function_exists( 'theme_view' ) ) {
     function theme_view( $key, $params = [] )
     {
         if ( Resolver::exists( 'theme' ) )
-            Resolver::exists( 'theme' )->view( $key, $params );
+            Resolver::get( 'theme' )->view( $key, $params );
     }
 }
