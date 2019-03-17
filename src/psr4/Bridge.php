@@ -860,7 +860,7 @@ abstract class Bridge implements Plugable
             if ( ( $this->config->get( 'localize.is_public' )
                     && ! load_textdomain( $domain, sprintf( '%s/%s/%s-%s.mo', WP_LANG_DIR, $domain, $domain, $locale ) )
                 )
-                ||
+                &&
                 ! load_textdomain( $domain, sprintf( '%s%s-%s.mo', $this->config->get( 'localize.path' ), $domain, $locale ) )
             )
                 load_plugin_textdomain( $domain, false, $this->config->get( 'localize.path' ) );
