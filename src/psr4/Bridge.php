@@ -20,7 +20,7 @@ use Exception;
  * @copyright 10Quality <http://www.10quality.com>
  * @license MIT
  * @package WPMVC
- * @version 3.1.2
+ * @version 3.1.4
  */
 abstract class Bridge implements Plugable
 {
@@ -842,7 +842,7 @@ abstract class Bridge implements Plugable
     /**
      * Loads localization.
      * @since 3.1.0
-     * @since 3.1.2 Extend locale file loadout.
+     * @since 3.1.4 Extend locale file loadout.
      */
     private function _localize()
     {
@@ -857,8 +857,8 @@ abstract class Bridge implements Plugable
             );
             if ( $this->config->get( 'localize.unload' ) )
                 unload_textdomain( $domain );
-            if ( ( $this->config->get( 'localize.is_public' )
-                    && ! load_textdomain( $domain, sprintf( '%s/%s/%s-%s.mo', WP_LANG_DIR, $domain, $domain, $locale ) )
+            if ( ( ! $this->config->get( 'localize.is_public' )
+                    || ! load_textdomain( $domain, sprintf( '%s/%s/%s-%s.mo', WP_LANG_DIR, $domain, $domain, $locale ) )
                 )
                 &&
                 ! load_textdomain( $domain, sprintf( '%s%s-%s.mo', $this->config->get( 'localize.path' ), $domain, $locale ) )
