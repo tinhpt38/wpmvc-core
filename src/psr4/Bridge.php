@@ -20,7 +20,7 @@ use Exception;
  * @copyright 10Quality <http://www.10quality.com>
  * @license MIT
  * @package WPMVC
- * @version 3.1.4
+ * @version 3.1.5
  */
 abstract class Bridge implements Plugable
 {
@@ -687,8 +687,9 @@ abstract class Bridge implements Plugable
     /**
      * Returns valid action filter item.
      * @since 1.0.3
+     * @since 3.1.5 Mapping parameters support.
      *
-     * @param string $hook             Wordpress hook name.
+     * @param string $hook          Wordpress hook name.
      * @param string $mvc_call      Lightweight MVC call. (i.e. 'Controller@method')
      * @param mixed  $priority      Execution priority or MVC params.
      * @param mixed  $accepted_args Accepted args or priority.
@@ -696,20 +697,21 @@ abstract class Bridge implements Plugable
      *
      * @return array
      */
-    private function get_hook( $hook, $mvc_call, $priority = 10, $accepted_args = 1, $args = 1 )
+    private function get_hook( $hook, $mvc_call, $priority = 10, $accepted_args = 1, $args = null )
     {
         return [
-            'hook'        => $hook,
-            'mvc'        => $mvc_call,
-            'priority'    => is_array( $priority ) ? $accepted_args : $priority,
-            'args'        => is_array( $priority ) ? $args : $accepted_args,
-            'mvc_args'    => is_array( $priority ) ? $priority : null,
+            'hook'      => $hook,
+            'mvc'       => $mvc_call,
+            'priority'  => is_array( $priority ) ? $accepted_args : $priority,
+            'args'      => is_array( $priority ) ? ( $args ? $args : count( $priority ) ) : $accepted_args,
+            'mvc_args'  => is_array( $priority ) ? $priority : null,
         ];
     }
 
     /**
      * Override mvc arguments with those defined when adding an action or filter.
      * @since 1.0.3
+     * @since 3.1.5 Mapping parameters support.
      *
      * @param string $mvc_call Lightweight MVC call. (i.e. 'Controller@method')
      * @param array  $args     Current args for call.
@@ -723,7 +725,7 @@ abstract class Bridge implements Plugable
             if ( ! empty( $this->actions[$i]['mvc_args'] )
                 && $this->actions[$i]['mvc'] === $mvc_call
             ) {
-                return $this->actions[$i]['mvc_args'];
+                return $this->process_mvc_args( $this->actions[$i]['mvc'], $this->actions[$i]['mvc_args'], $args );
             }
         }
         // Check on filters
@@ -731,7 +733,7 @@ abstract class Bridge implements Plugable
             if ( ! empty( $this->filters[$i]['mvc_args'] )
                 && $this->filters[$i]['mvc'] === $mvc_call
             ) {
-                return $this->filters[$i]['mvc_args'];
+                return $this->process_mvc_args( $this->actions[$i]['mvc'], $this->filters[$i]['mvc_args'], $args );
             }
         }
         // Check on shortcodes
@@ -739,10 +741,36 @@ abstract class Bridge implements Plugable
             if ( ! empty( $this->shortcodes[$i]['mvc_args'] )
                 && $this->shortcodes[$i]['mvc'] === $mvc_call
             ) {
-                return $this->shortcodes[$i]['mvc_args'];
+                return $this->process_mvc_args( $this->actions[$i]['mvc'], $this->shortcodes[$i]['mvc_args'], $args );
             }
         }
         return $args;
+    }
+    /**
+     * Process MVC arguments to determine if special treatment is needed.
+     * View arguments are processed to be sent as view parameters.
+     * @since 3.1.5
+     * 
+     * @param string $call     MVC call.
+     * @param array  $mvc_args MVC defined arguments.
+     * @param array  $args     Wordpress incoming hook arguments.
+     * 
+     * @return array
+     */
+    private function process_mvc_args( $call, $mvc_args, &$args )
+    {
+        if ( strpos( $call, 'view@' ) !== false ) {
+            $view_parmas = [];
+            foreach ( array_keys( $mvc_args ) as $index => $key ) {
+                if ( is_numeric( $key ) ) {
+                    $view_parmas[$mvc_args[$key]] = $args[$index];
+                } else if ( is_string( $key ) ) {
+                    $view_parmas[$key] = $mvc_args[$key];
+                }
+            }
+            return $view_parmas;
+        }
+        return $mvc_args;
     }
 
     /**

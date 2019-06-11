@@ -65,3 +65,8 @@ function wp_verify_nonce()
 {
     return true;
 }
+
+function get_stylesheet_directory()
+{
+    return __DIR__;
+}

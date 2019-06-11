@@ -1,0 +1,1 @@
+<?php if (isset($param)) : ?><h1><?php echo $param ?></h1><?php endif ?><?php if (isset($id)) : ?><h2><?php echo $id ?></h2><?php endif ?>Test View
