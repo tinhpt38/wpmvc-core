@@ -2,7 +2,7 @@
 
 namespace WPMVC\Contracts;
 
-use Closure;
+use WPMVC\Config;
 
 /**
  * Cacheable contract.
@@ -11,7 +11,7 @@ use Closure;
  * @author Alejandro Mostajo
  * @license MIT
  * @package Amostajo\WPPluginCore
- * @version 1.0.0
+ * @version 3.1.6
  */
 interface Cacheable
 {
@@ -20,7 +20,7 @@ interface Cacheable
 	 * @since 1.0.0
 	 * @param array $config Config settings.
 	 */
-	public function __construct( $config );
+	public function __construct( Config $config );
 
 	/**
 	 * Static constructor.
@@ -32,9 +32,13 @@ interface Cacheable
 	/**
 	 * Returns value stored in cache.
 	 * @since 1.0.0
-	 * @param string $key Cache key name.
+	 * 
+	 * @param string $key     Cache key name.
+	 * @param mixed  $default Defuault return value.
+	 * 
+	 * @return mixed
 	 */
-	public static function get( $key );
+	public static function get( $key, $default = null );
 
 	/**
 	 * Adds a value to cache.
@@ -57,12 +61,12 @@ interface Cacheable
 	 * Returns the value of a given key.
 	 * If it doesn't exist, then the value pass by is returned.
 	 * @since 1.0.0
-	 * @param string  $key     Main plugin object as reference.
-	 * @param int  	  $expires Expiration time in minutes.
-	 * @param Closure $value   Value to cache.
+	 * @param string   $key     Main plugin object as reference.
+	 * @param int  	   $expires Expiration time in minutes.
+	 * @param callable $value   Callable that returns value to cache.
 	 * @return mixed
 	 */
-	public static function remember( $key, $expires, Closure $value );
+	public static function remember( $key, $expires, $callable );
 
 	/**
 	 * Removes a key / value from cache.

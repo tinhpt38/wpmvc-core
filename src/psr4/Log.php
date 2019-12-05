@@ -13,7 +13,7 @@ use WPMVC\Contracts\Loggable;
  * @copyright 10Quality <http://www.10quality.com>
  * @license MIT
  * @package WPMVC
- * @version 1.0.1
+ * @version 3.1.6
  */
 class Log implements Loggable
 {
@@ -32,18 +32,21 @@ class Log implements Loggable
     /**
      * Default constructor.
      * @since 1.0.0
-     * @since 1.0.1 Path added.
+     * 
      * @param array $config Config settings.
      */
     public function __construct( Config $config )
     {
         if ( ! isset( self::$logger ) ) {
+            $path = function_exists( 'apply_filters' )
+                ? apply_filters( 'wpmvc_log_path_config_' . $config->get( 'namespace' ), $config->get( 'paths.log' ) )
+                : $config->get( 'paths.log' );
             // Create folder
-            if ( ! is_dir( $config->get( 'paths.log' ) ) ) {
-                mkdir( $config->get( 'paths.log' ), 0777, true );
+            if ( ! is_dir( $path ) ) {
+                mkdir( $path, 0777, true );
             }
             // Init logger
-            self::$path = $config->get( 'paths.log' );
+            self::$path = $path;
         }
     }
 

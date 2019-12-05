@@ -3,6 +3,7 @@
 namespace WPMVC;
 
 use Closure;
+use WPMVC\Config;
 use WPMVC\PHPFastCache\phpFastCache;
 use WPMVC\Contracts\Cacheable;
 
@@ -13,7 +14,7 @@ use WPMVC\Contracts\Cacheable;
  * @copyright 10Quality <http://www.10quality.com>
  * @license MIT
  * @package WPMVC
- * @version 1.0.0
+ * @version 3.1.6
  */
 class Cache implements Cacheable
 {
@@ -27,22 +28,27 @@ class Cache implements Cacheable
 	 * @since 1.0.0
 	 * @param array $config Config settings.
 	 */
-	public function __construct( $config )
+	public function __construct( Config $config )
 	{
 		if ( ! isset( self::$fastcache )
 			&& $config->get( 'cache' )
 		) {
+			$cache = function_exists( 'apply_filters' )
+				? apply_filters( 'wpmvc_cache_config_' . $config->get( 'namespace' ), $config->get( 'cache' ) )
+				: $config->get( 'cache' );
 			// Create folder
-			if ( ( $config->get( 'cache.storage' ) == 'auto'
-				|| $config->get( 'cache.storage' ) == 'files' )
-				&& ! is_dir( $config->get( 'cache.path' ) )
+			if ( array_key_exists( 'storage' , $cache )
+				&& array_key_exists( 'path' , $cache )
+				&& ( $cache['storage'] == 'auto'
+					|| $cache['storage'] == 'files' )
+				&& ! is_dir( $cache['path'] )
 			) {
-				mkdir( $config->get( 'cache.path' ), 0777, true );
+				mkdir( $cache['path'], 0777, true );
 			}
 			// Init cache
-			phpFastCache::setup( $config->get( 'cache' ) );
+			phpFastCache::setup( $cache );
 			self::$fastcache = phpFastCache();
-			phpFastCache::$disabled = !$config->get( 'cache.enabled' );
+			phpFastCache::$disabled = ! array_key_exists( 'enabled' , $cache ) || ! $cache['enabled'];
 		}
 	}
 
@@ -69,15 +75,16 @@ class Cache implements Cacheable
 	/**
 	 * Returns value stored in cache.
 	 * @since 1.0.0
-	 * @param string $key Cache key name.
+	 * 
+	 * @param string $key     Cache key name.
+	 * @param mixed  $default Defuault return value.
+	 * 
+	 * @return mixed
 	 */
-	public static function get( $key )
+	public static function get( $key, $default = null )
 	{
 		$cache = self::instance();
-		if ( $cache ) {
-			return $cache->get( $key );
-		}
-		return;
+		return $cache && $cache->isExisting( $key ) ? $cache->get( $key ) : $default;
 	}
 
 	/**
@@ -114,19 +121,19 @@ class Cache implements Cacheable
 	 * Returns the value of a given key.
 	 * If it doesn't exist, then the value pass by is returned.
 	 * @since 1.0.0
-	 * @param string  $key     Main plugin object as reference.
-	 * @param int  	  $expires Expiration time in minutes.
-	 * @param Closure $value   Value to cache.
+	 * @param string   $key     Main plugin object as reference.
+	 * @param int  	   $expires Expiration time in minutes.
+	 * @param callable $value   Callable that returns value to cache.
 	 * @return mixed
 	 */
-	public static function remember( $key, $expires, Closure $closure )
+	public static function remember( $key, $expires, $callable )
 	{
 		$cache = self::instance();
 		if ( $cache ) {
 			if ( $cache->isExisting( $key ) ) {
 				return $cache->get( $key );
-			} else if ( $closure != null ) {
-				$value = $closure();
+			} else if ( $callable !== null && is_callable( $callable ) ) {
+				$value = call_user_func_array( $callable, [] );
 				$cache->set( $key, $value, $expires * 60 );
 				return $value;
 			}
