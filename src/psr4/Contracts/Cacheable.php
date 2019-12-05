@@ -27,7 +27,7 @@ interface Cacheable
 	 * @since 1.0.0
 	 * @param array $config Config settings.
 	 */
-	public static function init( $config );
+	public static function init( Config $config );
 
 	/**
 	 * Returns value stored in cache.
