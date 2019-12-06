@@ -39,7 +39,7 @@ class Log implements Loggable
     {
         if ( ! isset( self::$logger ) ) {
             $path = function_exists( 'apply_filters' )
-                ? apply_filters( 'wpmvc_log_path_config_' . $config->get( 'namespace' ), $config->get( 'paths.log' ) )
+                ? apply_filters( 'wpmvc_log_path_config', $config->get( 'paths.log' ) )
                 : $config->get( 'paths.log' );
             // Create folder
             if ( ! is_dir( $path ) ) {

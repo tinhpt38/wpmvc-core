@@ -34,7 +34,7 @@ class Cache implements Cacheable
 			&& $config->get( 'cache' )
 		) {
 			$cache = function_exists( 'apply_filters' )
-				? apply_filters( 'wpmvc_cache_config_' . $config->get( 'namespace' ), $config->get( 'cache' ) )
+				? apply_filters( 'wpmvc_cache_config', $config->get( 'cache' ) )
 				: $config->get( 'cache' );
 			// Create folder
 			if ( array_key_exists( 'storage' , $cache )
