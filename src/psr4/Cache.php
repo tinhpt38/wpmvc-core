@@ -14,7 +14,7 @@ use WPMVC\Contracts\Cacheable;
  * @copyright 10Quality <http://www.10quality.com>
  * @license MIT
  * @package WPMVC
- * @version 3.1.6
+ * @version 3.1.7
  */
 class Cache implements Cacheable
 {
