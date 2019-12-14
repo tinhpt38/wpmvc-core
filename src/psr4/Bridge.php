@@ -20,7 +20,7 @@ use Exception;
  * @copyright 10Quality <http://www.10quality.com>
  * @license MIT
  * @package WPMVC
- * @version 3.1.5
+ * @version 3.1.8
  */
 abstract class Bridge implements Plugable
 {
@@ -862,7 +862,9 @@ abstract class Bridge implements Plugable
     private function _registry_supports( $type, $args )
     {
         for ( $i = count( $this->models )-1; $i >= 0; --$i ) {
-            if ( $this->models[$i]->type === $type )
+            if ( is_object( $this->models[$i] )
+                && $this->models[$i]->type === $type
+            )
                 add_post_type_support( $type, $this->models[$i]->registry_supports );
         }
     }
