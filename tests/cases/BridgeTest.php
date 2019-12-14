@@ -107,6 +107,7 @@ class BridgeTest extends PHPUnit_Framework_TestCase
     }
     /**
      * Test method.
+     * @since 3.1.8
      */
     function testViewMethod()
     {
@@ -121,6 +122,7 @@ class BridgeTest extends PHPUnit_Framework_TestCase
     }
     /**
      * Test method.
+     * @since 3.1.8
      */
     function testGetViewMethod()
     {

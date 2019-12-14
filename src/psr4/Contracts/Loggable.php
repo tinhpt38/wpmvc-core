@@ -11,7 +11,7 @@ use WPMVC\Config;
  * @author Alejandro Mostajo
  * @license MIT
  * @package Amostajo\WPPluginCore
- * @version 1.0.0
+ * @version 3.1.8
  */
 interface Loggable
 {
@@ -42,7 +42,7 @@ interface Loggable
 	 * @param mixed $message Message to debug.
 	 * @param array $values  Value(s) to debug.
 	 */
-	public static function debug( $message, $values = [] );
+	public static function debug( $message, $values = null );
 
 	/**
 	 * Prints error log.

@@ -11,7 +11,7 @@ use WPMVC\KLogger\Logger;
  * @copyright 10Quality <http://www.10quality.com>
  * @license MIT
  * @package WPMVC\MVC
- * @version 3.1.6
+ * @version 3.1.8
  */
 class LogTest extends PHPUnit_Framework_TestCase
 {
@@ -116,5 +116,29 @@ class LogTest extends PHPUnit_Framework_TestCase
         $contents = $this->getContents();
         // Assert
         $this->assertEquals(1, preg_match('/\[error\][\s\S]+Exception[\s\S]+error[\s\S]+Stack trace\:/', $contents));
+    }
+    /**
+     * Test.
+     * @since 3.1.8
+     */
+    public function testDebugOnlyMessage()
+    {
+        // Prepare and execute
+        Log::debug('only_message');
+        $contents = $this->getContents();
+        // Assert
+        $this->assertEquals(1, preg_match('/\[debug\][\s\S]+only_message/', $contents));
+    }
+    /**
+     * Test.
+     * @since 3.1.8
+     */
+    public function testDebugDirectValue()
+    {
+        // Prepare and execute
+        Log::debug(123);
+        $contents = $this->getContents();
+        // Assert
+        $this->assertEquals(1, preg_match('/\[debug\][\s\S]+value[\s\S]+123/', $contents));
     }
 }

@@ -13,7 +13,7 @@ use WPMVC\Contracts\Loggable;
  * @copyright 10Quality <http://www.10quality.com>
  * @license MIT
  * @package WPMVC
- * @version 3.1.7
+ * @version 3.1.8
  */
 class Log implements Loggable
 {
@@ -92,17 +92,20 @@ class Log implements Loggable
      * @param mixed $message Message to debug.
      * @param array $values  Value(s) to debug.
      */
-    public static function debug( $message, $values = [] )
+    public static function debug( $message, $values = null )
     {
         $logger = self::instance();
         if ( $logger ) {
             $logger->debug(
-                $message,
-                is_array( $values )
-                    ? $values
-                    : ( is_object( $values )
-                        ? (array)$values
-                        : [ $values ]
+                is_string( $message ) ? $message : 'value',
+                $values === null && ! is_string( $message )
+                    ? ( is_array( $message ) ? $message : [ $message ] )
+                    : ( is_array( $values )
+                        ? $values
+                        : ( is_object( $values )
+                            ? (array)$values
+                            : [ $values ]
+                        )
                     )
             );
         }
