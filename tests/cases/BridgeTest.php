@@ -6,7 +6,7 @@
  * @copyright 10Quality <http://www.10quality.com>
  * @license MIT
  * @package WPMVC\MVC
- * @version 3.1.5
+ * @version 3.1.8
  */
 class BridgeTest extends PHPUnit_Framework_TestCase
 {
@@ -104,5 +104,32 @@ class BridgeTest extends PHPUnit_Framework_TestCase
         $main->{'_v_void_view@view'}('title', 123);
         // Assert
         $this->assertEquals('<h1>title</h1><h2>123</h2>Test View', ob_get_clean());
+    }
+    /**
+     * Test method.
+     */
+    function testViewMethod()
+    {
+        // Prepare
+        global $config;
+        $main = new Main($config);
+        // Exec
+        ob_start();
+        $main->view('view', ['param' => 'view()']);
+        // Assert
+        $this->assertEquals('<h1>view()</h1>Test View', ob_get_clean());
+    }
+    /**
+     * Test method.
+     */
+    function testGetViewMethod()
+    {
+        // Prepare
+        global $config;
+        $main = new Main($config);
+        // Exec
+        $html = $main->get_view('view', ['param' => 'gat_view()']);
+        // Assert
+        $this->assertEquals('<h1>gat_view()</h1>Test View', $html);
     }
 }

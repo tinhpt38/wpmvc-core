@@ -270,6 +270,20 @@ abstract class Bridge implements Plugable
     }
 
     /**
+     * Returns view based on the parameters passed by.
+     * @since 3.1.8
+     *
+     * @param string $view   Name and location of the view within "theme/views" path.
+     * @param array  $params View parameters passed by.
+     *
+     * @return string
+     */
+    public function get_view( $view, $params = array() )
+    {
+        return $this->mvc->view->get( $view, $params );
+    }
+
+    /**
      * Called by autoload to init class.
      * @since 1.0.2
      * @return void
