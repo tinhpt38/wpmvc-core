@@ -4,7 +4,7 @@ namespace WPMVC;
 
 /**
  * Request class.
- * Used to get web input from query string or wordpress' query vars.
+ * Used to get web input from query string or WordPress' query vars.
  *
  * @link https://github.com/amostajo/lightweight-mvc/blob/v1.0/src/Request.php
  * @author Alejandro Mostajo <http://about.me/amostajo>
@@ -16,10 +16,10 @@ namespace WPMVC;
 class Request
 {
     /**
-     * Gets input from either wordpress query vars or request's POST or GET.
+     * Gets input from either WordPress query vars or request's POST or GET.
      * @since 1.0.0
      *
-     * @global object $wp_query Wordpress query.
+     * @global object $wp_query WordPress query.
      *
      * @param string $key     Name of the input.
      * @param mixed  $default Default value if data is not found.

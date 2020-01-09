@@ -10,7 +10,7 @@ use WPMVC\Commands\CreateCommand;
 use WPMVC\Commands\SetCommand;
 
 /**
- * CORE wordpress functions.
+ * CORE WordPress functions.
  *
  * @author Alejandro Mostajo <http://about.me/amostajo>
  * @copyright 10Quality <http://www.10quality.com>
@@ -60,7 +60,7 @@ if ( ! function_exists( 'assets_url' ) ) {
     /**
      * Returns url of asset located in a theme or plugin.
      * @since 1.0.1
-     * @since 2.0.4 Refactored to work with new structure.
+     * @since 2.0.4  Refactored to work with new structure.
      * @since 2.0.15 Added scheme as paramete and network support.
      *
      * @link https://codex.wordpress.org/Function_Reference/home_url
@@ -94,7 +94,7 @@ if ( ! function_exists( 'get_ayuco' ) ) {
     /**
      * Returns ayuco.
      * @since 2.0.3
-     * @since 2.0.4 Added new commands.
+     * @since 2.0.4  Added new commands.
      * @since 2.0.13 Added SetCommand and sorts registration by name.
      *
      * @param string $path Project path.
@@ -122,7 +122,7 @@ if ( ! function_exists( 'get_wp_home_path' ) )
      * Returns wordpress root path.
      * @since 2.0.4
      * @since 2.0.10 Force file update on repository.
-     * @since 3.0.5 Added filters to support path customization. 
+     * @since 3.0.5  Added filters to support path customization. 
      *
      * @return string
      */
