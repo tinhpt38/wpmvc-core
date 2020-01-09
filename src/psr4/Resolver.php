@@ -3,7 +3,7 @@
 namespace WPMVC;
 
 /**
- * Resolver holds reference to any global instace created in Wordpress.
+ * Resolver holds reference to any global instace created in WordPress.
  * Allows for easy access to any instance initialized.
  *
  * @author Cami Mostajo <info@10quality.com>
@@ -26,7 +26,7 @@ class Resolver
      * @since 3.1.0
      * 
      * @param string              $key     Instance key (namespace or other).
-     * @param WPMVC\Bridge|object &$bridge Bridge instace to keep referece of.
+     * @param WPMVC\Bridge|object &$bridge Bridge instance to keep reference of.
      */
     public static function add( $key, &$bridge )
     {
@@ -34,7 +34,7 @@ class Resolver
     }
 
     /**
-     * Returns any instantiated instence stored in resolver.
+     * Returns any instantiated instance stored in resolver.
      * @since 3.1.0
      * 
      * @param string $key Instance key (namespace or other).

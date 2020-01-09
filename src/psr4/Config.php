@@ -4,7 +4,7 @@ namespace WPMVC;
 
 /**
  * Config class.
- * Part of the core library of Wordpress Plugin.
+ * Part of the core library of WordPress Plugin.
  *
  * @author Alejandro Mostajo <http://about.me/amostajo>
  * @copyright 10Quality <http://www.10quality.com>
@@ -34,7 +34,7 @@ class Config
 
 	/**
 	 * Returns value stored in given key.
-	 * Can acces multidimenssional array values with a DOT(.)
+	 * Can acces multidimensional array values with a DOT(.)
 	 * i.e. paypal.client_id
 	 * @since 1.0.0
 	 *

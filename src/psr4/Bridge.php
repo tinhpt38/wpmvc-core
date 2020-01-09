@@ -13,7 +13,7 @@ use Exception;
 /**
  * Plugin class.
  * To be extended as main plugin / theme class.
- * Part of the core library of Wordpress Plugin / Wordpress Theme.
+ * Part of the core library of WordPress Plugin / WordPress Theme.
  *
  * @link https://github.com/amostajo/wordpress-plugin-core/blob/v1.0/src/psr4/Plugin.php
  * @author Alejandro Mostajo <http://about.me/amostajo>
@@ -46,28 +46,28 @@ abstract class Bridge implements Plugable
     protected $addons;
 
     /**
-     * List of Wordpress action hooks to add.
+     * List of WordPress action hooks to add.
      * @var array
      * @since 1.0.3
      */
     protected $actions;
 
     /**
-     * List of Wordpress filter hooks to add.
+     * List of WordPress filter hooks to add.
      * @var array
      * @since 1.0.3
      */
     protected $filters;
 
     /**
-     * List of Wordpress shortcodes to add.
+     * List of WordPress shortcodes to add.
      * @var array
      * @since 1.0.3
      */
     protected $shortcodes;
 
     /**
-     * List of Wordpress widgets to add.
+     * List of WordPress widgets to add.
      * @var array
      * @since 1.0.3
      */
@@ -332,10 +332,10 @@ abstract class Bridge implements Plugable
     }
 
     /**
-     * Adds a Wordpress action hook.
+     * Adds a WordPress action hook.
      * @since 1.0.3
      *
-     * @param string $hook             Wordpress hook name.
+     * @param string $hook          WordPress hook name.
      * @param string $mvc_call      Lightweight MVC call. (i.e. 'Controller@method')
      * @param mixed  $priority      Execution priority or MVC params.
      * @param mixed  $accepted_args Accepted args or priority.
@@ -353,10 +353,10 @@ abstract class Bridge implements Plugable
     }
 
     /**
-     * Adds a Wordpress filter hook.
+     * Adds a WordPress filter hook.
      * @since 1.0.3
      *
-     * @param string $hook             Wordpress hook name.
+     * @param string $hook          WordPress hook name.
      * @param string $mvc_call      Lightweight MVC call. (i.e. 'Controller@method')
      * @param mixed  $priority      Execution priority or MVC params.
      * @param mixed  $accepted_args Accepted args or priority.
@@ -374,10 +374,10 @@ abstract class Bridge implements Plugable
     }
 
     /**
-     * Adds a Wordpress shortcode.
+     * Adds a WordPress shortcode.
      * @since 1.0.3
      *
-     * @param string $tag        Wordpress tag name.
+     * @param string $tag      WordPress tag name.
      * @param string $mvc_call Lightweight MVC call. (i.e. 'Controller@method')
      */
     public function add_shortcode( $tag, $mvc_call, $mvc_args = null )
@@ -390,7 +390,7 @@ abstract class Bridge implements Plugable
     }
 
     /**
-     * Adds a Wordpress shortcode.
+     * Adds a WordPress widget.
      * @since 1.0.3
      *
      * @param string $class Widget class name to add.
@@ -435,7 +435,7 @@ abstract class Bridge implements Plugable
     }
 
     /**
-     * Adds hooks and filters into Wordpress core.
+     * Adds hooks and filters into WordPress core.
      * @since 1.0.3
      * @since 2.0.4 Added models.
      * @since 2.0.7 Added assets.
@@ -464,7 +464,7 @@ abstract class Bridge implements Plugable
                     $filter['args']
                 );
             }
-            // Filters
+            // Shortcodes
             foreach ( $this->shortcodes as $shortcode ) {
                 add_shortcode(
                     $shortcode['tag'],
@@ -490,7 +490,7 @@ abstract class Bridge implements Plugable
     }
 
     /**
-     * Registers added widgets into Wordpress.
+     * Registers added widgets into WordPress.
      * @since 1.0.3
      */
     public function _widgets()
@@ -501,9 +501,9 @@ abstract class Bridge implements Plugable
     }
 
     /**
-     * Registers added models into Wordpress.
+     * Registers added models into WordPress.
      * @since 2.0.4
-     * @since 2.0.7 Support for automated models with no registration.
+     * @since 2.0.7  Support for automated models with no registration.
      * @since 2.0.16 Registry supports
      */
     public function _models()
@@ -703,7 +703,7 @@ abstract class Bridge implements Plugable
      * @since 1.0.3
      * @since 3.1.5 Mapping parameters support.
      *
-     * @param string $hook          Wordpress hook name.
+     * @param string $hook          WordPress hook name.
      * @param string $mvc_call      Lightweight MVC call. (i.e. 'Controller@method')
      * @param mixed  $priority      Execution priority or MVC params.
      * @param mixed  $accepted_args Accepted args or priority.
@@ -767,7 +767,7 @@ abstract class Bridge implements Plugable
      * 
      * @param string $call     MVC call.
      * @param array  $mvc_args MVC defined arguments.
-     * @param array  $args     Wordpress incoming hook arguments.
+     * @param array  $args     WordPress incoming hook arguments.
      * 
      * @return array
      */
@@ -813,7 +813,7 @@ abstract class Bridge implements Plugable
     }
 
     /**
-     * Addes automated wordpress save post functionality.
+     * Addes automated WordPress save post functionality.
      * @since 2.0.4
      * @since 2.0.9 Fix for multiple types calling to function.
      *
@@ -840,9 +840,9 @@ abstract class Bridge implements Plugable
     /**
      * Checks if generated assets exist or not.
      * @since 2.0.7
-     * @since 2.0.8 Refactor based on new config file.
+     * @since 2.0.8  Refactor based on new config file.
      * @since 2.0.12 Dir __DIR__ checked on config.
-     * @since 3.1.0 Refactors name and allows for admin enqueues.
+     * @since 3.1.0  Refactors name and allows for admin enqueues.
      */
     private function _check_assets()
     {

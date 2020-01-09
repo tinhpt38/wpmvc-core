@@ -1,7 +1,7 @@
 <?php
 /**
- * Wordpress compatibility functions.
- * Emulates wordpress functions for testing purposes.
+ * WordPress compatibility functions.
+ * Emulates WordPress functions for testing purposes.
  *
  * @author Alejandro Mostajo <http://about.me/amostajo>
  * @copyright 10Quality <http://www.10quality.com>
