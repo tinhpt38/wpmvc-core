@@ -76,6 +76,17 @@ if ( ! function_exists( 'assets_url' ) ) {
             'asset_base_url',
             rtrim( $is_network ? network_home_url( '/', $scheme ) : home_url( '/', $scheme ), '/' )
         );
+        // Polylang support
+        if ( function_exists( 'pll_current_language' ) ) {
+            $lang = pll_current_language( 'slug' );
+            if ( strpos( $url, '/' . $lang ) !== false)
+                $url = str_replace( '/' . $lang, '', $url );
+        }
+        // WPML support
+        if ( function_exists( 'icl_object_id' ) && defined( 'ICL_LANGUAGE_CODE' ) ) {
+            if ( strpos( $url, '/' . ICL_LANGUAGE_CODE ) !== false)
+                $url = str_replace( '/' . ICL_LANGUAGE_CODE, '', $url );
+        }
         // Clean base path
         $route = preg_replace( '/.+?(?=wp-content)/', '', $route );
         // Clean project relative path
