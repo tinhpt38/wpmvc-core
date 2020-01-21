@@ -2,7 +2,6 @@
 
 use Ayuco\Listener;
 use WPMVC\Resolver;
-use WPMVC\Commands\SetNameCommand;
 use WPMVC\Commands\SetupCommand;
 use WPMVC\Commands\AddCommand;
 use WPMVC\Commands\RegisterCommand;
@@ -23,7 +22,6 @@ if ( ! function_exists( 'resize_image' ) ) {
     /**
      * Resizes image and returns URL path.
      * @since 1.0.1
-     * @since 2.0.14 ID added as parameter to prevent duplicate entries by the same name.
      *
      * @param string  $url    Image URL path
      * @param int     $width  Width wanted.
@@ -60,8 +58,6 @@ if ( ! function_exists( 'assets_url' ) ) {
     /**
      * Returns url of asset located in a theme or plugin.
      * @since 1.0.1
-     * @since 2.0.4  Refactored to work with new structure.
-     * @since 2.0.15 Added scheme as paramete and network support.
      *
      * @link https://codex.wordpress.org/Function_Reference/home_url
      * @link https://codex.wordpress.org/Function_Reference/network_home_url
@@ -94,8 +90,6 @@ if ( ! function_exists( 'get_ayuco' ) ) {
     /**
      * Returns ayuco.
      * @since 2.0.3
-     * @since 2.0.4  Added new commands.
-     * @since 2.0.13 Added SetCommand and sorts registration by name.
      *
      * @param string $path Project path.
      *
@@ -110,7 +104,6 @@ if ( ! function_exists( 'get_ayuco' ) ) {
         $ayuco->register(new RegisterCommand($path));
         $ayuco->register(new SetCommand($path));
         $ayuco->register(new SetupCommand($path));
-        $ayuco->register(new SetNameCommand($path));
 
         return $ayuco;
     }
