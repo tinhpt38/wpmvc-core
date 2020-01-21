@@ -3,6 +3,7 @@
 use WPMVC\Cache;
 use WPMVC\Config;
 use WPMVC\PHPFastCache\phpFastCache_instances;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests cache.
@@ -13,7 +14,7 @@ use WPMVC\PHPFastCache\phpFastCache_instances;
  * @package WPMVC\MVC
  * @version 3.1.6
  */
-class CacheTest extends PHPUnit_Framework_TestCase
+class CacheTest extends TestCase
 {
     /**
      * Testing cache variable.

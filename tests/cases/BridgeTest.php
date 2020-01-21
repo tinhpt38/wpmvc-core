@@ -1,4 +1,6 @@
 <?php
+
+use PHPUnit\Framework\TestCase;
 /**
  * Tests global functions.
  *
@@ -6,9 +8,9 @@
  * @copyright 10Quality <http://www.10quality.com>
  * @license MIT
  * @package WPMVC\MVC
- * @version 3.1.8
+ * @version 3.1.9
  */
-class BridgeTest extends PHPUnit_Framework_TestCase
+class BridgeTest extends TestCase
 {
     /**
      * Test bridge constructor.

@@ -1,6 +1,7 @@
 <?php
 
 use WPMVC\Request;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests request class.
@@ -11,7 +12,7 @@ use WPMVC\Request;
  * @package WPMVC\MVC
  * @version 1.0.0
  */
-class RequestTest extends PHPUnit_Framework_TestCase
+class RequestTest extends TestCase
 {
     function testPost()
     {

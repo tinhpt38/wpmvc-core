@@ -1,6 +1,7 @@
 <?php
 
 use WPMVC\Resolver;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests global functions.
@@ -11,7 +12,7 @@ use WPMVC\Resolver;
  * @package WPMVC\MVC
  * @version 3.1.0
  */
-class FunctionsTest extends PHPUnit_Framework_TestCase
+class FunctionsTest extends TestCase
 {
     function testAssetUrl()
     {

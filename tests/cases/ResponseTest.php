@@ -1,6 +1,7 @@
 <?php
 
 use WPMVC\Response;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests response class.
@@ -11,7 +12,7 @@ use WPMVC\Response;
  * @package WPMVC\MVC
  * @version 3.0.0
  */
-class ResponseTest extends PHPUnit_Framework_TestCase
+class ResponseTest extends TestCase
 {
     function testDefaultFalse()
     {

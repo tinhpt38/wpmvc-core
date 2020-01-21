@@ -3,6 +3,7 @@
 use WPMVC\Log;
 use WPMVC\Config;
 use WPMVC\KLogger\Logger;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests log/logger.
@@ -13,7 +14,7 @@ use WPMVC\KLogger\Logger;
  * @package WPMVC\MVC
  * @version 3.1.8
  */
-class LogTest extends PHPUnit_Framework_TestCase
+class LogTest extends TestCase
 {
     /**
      * Testing logger variable.

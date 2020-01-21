@@ -1,6 +1,7 @@
 <?php
 
 use WPMVC\Resolver;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests resolver class.
@@ -11,7 +12,7 @@ use WPMVC\Resolver;
  * @package WPMVC
  * @version 3.1.0
  */
-class ResolverTest extends PHPUnit_Framework_TestCase
+class ResolverTest extends TestCase
 {
     function testAdd()
     {
