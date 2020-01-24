@@ -15,7 +15,7 @@ use WPMVC\Commands\SetCommand;
  * @copyright 10Quality <http://www.10quality.com>
  * @license MIT
  * @package WPMVC
- * @version 3.1.0
+ * @version 3.1.1
  */
 
 if ( ! function_exists( 'resize_image' ) ) {
@@ -126,12 +126,17 @@ if ( ! function_exists( 'get_wp_home_path' ) )
      * Returns wordpress root path.
      * @since 2.0.4
      * @since 2.0.10 Force file update on repository.
-     * @since 3.0.5  Added filters to support path customization. 
+     * @since 3.0.5  Added filters to support path customization.
+     * @since 3.1.1  Ensure get_home_path is available
      *
      * @return string
      */
     function get_wp_home_path()
     {
+        // Ensure get_home_path is available
+        if ( ! function_exists( 'get_home_path' ) )
+            require_once( ABSPATH . 'wp-admin/includes/file.php' );
+
         return apply_filters(
             'home_path',
             function_exists( 'get_home_path' )
