@@ -1,13 +1,12 @@
 # Core Package (For WordPress MVC)
---------------------------------
 
 [![Latest Stable Version](https://poser.pugx.org/10quality/wpmvc-core/v/stable)](https://packagist.org/packages/10quality/wpmvc-core)
 [![Total Downloads](https://poser.pugx.org/10quality/wpmvc-core/downloads)](https://packagist.org/packages/10quality/wpmvc-core)
 [![License](https://poser.pugx.org/10quality/wpmvc-core/license)](https://packagist.org/packages/10quality/wpmvc-core)
 
-Forked version for WPMVC.
+The core package (library and functionality) for [WordPress MVC](https://www.wordpress-mvc.com/).
 
-Core package (library and functionality) fo WordPress MVC. Core comes with MVC integration, Cache, Logs and more.
+This package comes with MVC integration, Cache, Logs and more.
 
 ## Coding Guidelines
 
