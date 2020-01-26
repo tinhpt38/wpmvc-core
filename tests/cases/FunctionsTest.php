@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
  * @copyright 10Quality <http://www.10quality.com>
  * @license MIT
  * @package WPMVC\MVC
- * @version 3.1.1
+ * @version 3.1.10
  */
 class FunctionsTest extends TestCase
 {

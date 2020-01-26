@@ -15,7 +15,7 @@ use WPMVC\Commands\SetCommand;
  * @copyright 10Quality <http://www.10quality.com>
  * @license MIT
  * @package WPMVC
- * @version 3.1.1
+ * @version 3.1.10
  */
 
 if ( ! function_exists( 'resize_image' ) ) {
