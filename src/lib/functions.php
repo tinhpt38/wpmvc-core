@@ -61,6 +61,7 @@ if ( ! function_exists( 'assets_url' ) ) {
      *
      * @link https://codex.wordpress.org/Function_Reference/home_url
      * @link https://codex.wordpress.org/Function_Reference/network_home_url
+     * 
      * @param string $path       Asset relative path.
      * @param string $file       File location path.
      * @param string $scheme     Scheme to give the home url context. Currently 'http','https'.
@@ -125,9 +126,6 @@ if ( ! function_exists( 'get_wp_home_path' ) )
     /**
      * Returns wordpress root path.
      * @since 2.0.4
-     * @since 2.0.10 Force file update on repository.
-     * @since 3.0.5  Added filters to support path customization.
-     * @since 3.1.1  Ensure get_home_path is available
      *
      * @return string
      */
@@ -154,8 +152,6 @@ if ( ! function_exists( 'assets_path' ) ) {
     /**
      * Returns path of asset located in a theme or plugin.
      * @since 1.0.1
-     * @since 2.0.4 Refactored to work with new structure.
-     * @since 3.0.5 Uses get_wp_home_path instead.
      *
      * @param string  $relative Asset relative path.
      * @param string  $file     File location path.
