@@ -10,10 +10,13 @@ use PHPUnit\Framework\TestCase;
  * @copyright 10Quality <http://www.10quality.com>
  * @license MIT
  * @package WPMVC\MVC
- * @version 3.1.0
+ * @version 3.1.1
  */
 class FunctionsTest extends TestCase
 {
+    /**
+     * Tests assets_url() global function.
+     */
     function testAssetUrl()
     {
         $this->assertEquals(
@@ -25,15 +28,24 @@ class FunctionsTest extends TestCase
             'http://localhost/phpunit/wp-content/themes/my-theme/assets/img/wpmvc.png'
         );
     }
+    /**
+     * Tests get_wp_home_path() global function.
+     */
     function testHomePathUrl()
     {
         $this->assertEquals('C:\\temp\\phpunit\\', get_wp_home_path());
     }
+    /**
+     * Tests exists_bridge() global function.
+     */
     function testExistsBridge()
     {
         $this->assertTrue(function_exists('exists_bridge'));
         $this->assertFalse(exists_bridge('other'));
     }
+    /**
+     * Tests get_bridge() global function.
+     */
     function testGetBridge()
     {
         // Prepare
@@ -47,6 +59,9 @@ class FunctionsTest extends TestCase
         $this->assertNotNull(get_bridge('test'));
         $this->assertEquals(7, get_bridge('test')->id);
     }
+    /**
+     * Tests theme_view() global function.
+     */
     function testThemeView()
     {
         $this->assertTrue(function_exists('theme_view'));

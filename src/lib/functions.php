@@ -91,9 +91,9 @@ if ( ! function_exists( 'assets_url' ) ) {
         // Clean base path
         $route = preg_replace( '/.+?(?=wp-content)/', '', $route );
         // Clean project relative path
-        $route = preg_replace( '/\/app[\/\\A-Za-z0-9\.\\-]+/', '', $route );
-        $route = preg_replace( '/\/assets[\/\\A-Za-z0-9\.\\-]+/', '', $route );
-        $route = preg_replace( '/\/vendor[\/\\A-Za-z0-9\.\\-]+/', '', $route );
+        $route = preg_replace( '/\/app[\/\\\\A-Za-z0-9\.\-]+/', '', $route );
+        $route = preg_replace( '/\/assets[\/\\\\A-Za-z0-9\.\-]+/', '', $route );
+        $route = preg_replace( '/\/vendor[\/\\\\A-Za-z0-9\.\-]+/', '', $route );
         return $url.'/'.apply_filters( 'app_route', $route ).'/assets/'.$path;
     }
 }
@@ -134,7 +134,6 @@ if ( ! function_exists( 'get_wp_home_path' ) )
         // Ensure get_home_path is available
         if ( ! function_exists( 'get_home_path' ) )
             require_once( ABSPATH . 'wp-admin/includes/file.php' );
-
         return apply_filters(
             'home_path',
             function_exists( 'get_home_path' )
@@ -166,9 +165,9 @@ if ( ! function_exists( 'assets_path' ) ) {
         // Clean base path
         $route = preg_replace( '/.+?(?=wp-content)/', '', $route );
         // Clean project relative path
-        $route = preg_replace( '/\/app[\/\\A-Za-z0-9\.\\-]+/', '', $route );
-        $route = preg_replace( '/\/assets[\/\\A-Za-z0-9\.\\-]+/', '', $route );
-        $route = preg_replace( '/\/vendor[\/\\A-Za-z0-9\.\\-]+/', '', $route );
+        $route = preg_replace( '/\/app[\/\\\\A-Za-z0-9\.\-]+/', '', $route );
+        $route = preg_replace( '/\/assets[\/\\\\A-Za-z0-9\.\-]+/', '', $route );
+        $route = preg_replace( '/\/vendor[\/\\\\A-Za-z0-9\.\-]+/', '', $route );
         return $path.'/'.apply_filters( 'app_route_path', $route ).'/assets/'.$relative;
     }
 }
