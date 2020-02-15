@@ -20,7 +20,7 @@ use Exception;
  * @copyright 10Quality <http://www.10quality.com>
  * @license MIT
  * @package WPMVC
- * @version 3.1.8
+ * @version 3.1.11
  */
 abstract class Bridge implements Plugable
 {
@@ -415,13 +415,16 @@ abstract class Bridge implements Plugable
      * Adds an asset for registration.
      * @since 2.0.7
      *
-     * @param string $asset    Asset relative path (within assets forlder).
-     * @param bool   $enqueue  Flag that indicates if asset should be enqueued upon registration.
-     * @param array  $dep      Dependencies.
-     * @param bool   $footer   Flag that indicates if asset should enqueue at page footer.
-     * @param bool   $is_admin Flag that indicates if asset should be enqueue on admin.
+     * @param string $asset         Asset relative path (within assets forlder).
+     * @param bool   $enqueue       Flag that indicates if asset should be enqueued upon registration.
+     * @param array  $dep           Dependencies.
+     * @param bool   $footer        Flag that indicates if asset should enqueue at page footer.
+     * @param bool   $is_admin      Flag that indicates if asset should be enqueue on admin.
+     * @param string $version       Asset version.
+     * @param string $name_id       Asset name ID (slug).
+     * @
      */
-    public function add_asset( $asset, $enqueue = true, $dep = [], $footer = null, $is_admin = false )
+    public function add_asset( $asset, $enqueue = true, $dep = [], $footer = null, $is_admin = false, $version = null, $name_id = null )
     {
         if ( $footer === null )
             $footer = preg_match( '/\.js/', $asset );
@@ -431,6 +434,8 @@ abstract class Bridge implements Plugable
             'dep'       => $dep,
             'footer'    => $footer,
             'is_admin'  => $is_admin,
+            'version'   => $version,
+            'name_id'   => $name_id,
         ];
     }
 
@@ -583,9 +588,6 @@ abstract class Bridge implements Plugable
     /**
      * Enqueues assets registered in class.
      * @since 2.0.7
-     * @since 2.0.8 Bug fix.
-     * @since 2.0.12 Dir __DIR__ checked on config.
-     * @since 3.1.0 Doesn't load admin assets.
      */
     public function _assets()
     {
@@ -595,22 +597,25 @@ abstract class Bridge implements Plugable
             : __DIR__;
         foreach ( $this->assets as $asset ) {
             if ( isset( $asset['is_admin'] ) && $asset['is_admin'] ) continue;
-            $name = strtolower( preg_replace( '/css|js|\/|\.min|\./', '', $asset['path'] ) )
-                .'-'.strtolower( $this->config->get('namespace') );
+            $name = !empty( $asset['name_id'] )
+                ? $asset['name_id']
+                : strtolower( preg_replace( '/css|js|\/|\.min|\./', '', $asset['path'] ) )
+                    . '-' . strtolower( $this->config->get('namespace') );
+            $asset_version = empty( $asset['version'] ) ? $version : $asset['version'];
             // Styles
             if ( preg_match( '/\.css/', $asset['path'] ) ) {
                 wp_register_style(
                     $name,
                     assets_url( $asset['path'], $dir ),
                     $asset['dep'],
-                    $version
+                    $asset_version
                 );
                 if ($asset['enqueue'])
                     wp_enqueue_style(
                         $name,
                         assets_url( $asset['path'], $dir ),
                         $asset['dep'],
-                        $version,
+                        $asset_version,
                         $asset['footer']
                     );
             }
@@ -620,14 +625,14 @@ abstract class Bridge implements Plugable
                     $name,
                     assets_url( $asset['path'], $dir ),
                     $asset['dep'],
-                    $version
+                    $asset_version
                 );
                 if ($asset['enqueue'])
                     wp_enqueue_script(
                         $name,
                         assets_url( $asset['path'], $dir ),
                         $asset['dep'],
-                        $version,
+                        $asset_version,
                         $asset['footer']
                     );
             }
@@ -646,22 +651,25 @@ abstract class Bridge implements Plugable
             : __DIR__;
         foreach ( $this->assets as $asset ) {
             if ( ! isset( $asset['is_admin'] ) || ! $asset['is_admin'] ) continue;
-            $name = strtolower( preg_replace( '/css|js|\/|\.min|\./', '', $asset['path'] ) )
-                .'-'.strtolower( $this->config->get('namespace') );
+            $name = !empty( $asset['name_id'] )
+                ? $asset['name_id']
+                : strtolower( preg_replace( '/css|js|\/|\.min|\./', '', $asset['path'] ) )
+                    . '-' . strtolower( $this->config->get('namespace') );
+            $asset_version = empty( $asset['version'] ) ? $version : $asset['version'];
             // Styles
             if ( preg_match( '/\.css/', $asset['path'] ) ) {
                 wp_register_style(
                     $name,
                     assets_url( $asset['path'], $dir ),
                     $asset['dep'],
-                    $version
+                    $asset_version
                 );
                 if ($asset['enqueue'])
                     wp_enqueue_style(
                         $name,
                         assets_url( $asset['path'], $dir ),
                         $asset['dep'],
-                        $version,
+                        $asset_version,
                         $asset['footer']
                     );
             }
@@ -671,14 +679,14 @@ abstract class Bridge implements Plugable
                     $name,
                     assets_url( $asset['path'], $dir ),
                     $asset['dep'],
-                    $version
+                    $asset_version
                 );
                 if ($asset['enqueue'])
                     wp_enqueue_script(
                         $name,
                         assets_url( $asset['path'], $dir ),
                         $asset['dep'],
-                        $version,
+                        $asset_version,
                         $asset['footer']
                     );
             }
@@ -840,9 +848,6 @@ abstract class Bridge implements Plugable
     /**
      * Checks if generated assets exist or not.
      * @since 2.0.7
-     * @since 2.0.8  Refactor based on new config file.
-     * @since 2.0.12 Dir __DIR__ checked on config.
-     * @since 3.1.0  Refactors name and allows for admin enqueues.
      */
     private function _check_assets()
     {
@@ -857,10 +862,12 @@ abstract class Bridge implements Plugable
                 if ( $file->exists( assets_path( $asset['asset'], $dir ) ) )
                     $this->add_asset(
                         $asset['asset'],
-                        isset( $asset['enqueue'] ) ? $asset['enqueue'] : true,
+                        array_key_exists( 'enqueue', $asset ) ? $asset['enqueue'] : true,
                         $asset['dep'],
                         $asset['footer'],
-                        isset( $asset['is_admin'] ) ? $asset['is_admin'] : false
+                        array_key_exists( 'is_admin', $asset ) ? $asset['is_admin'] : false,
+                        array_key_exists( 'version', $asset ) ? $asset['version'] : null,
+                        array_key_exists( 'id', $asset ) ? $asset['id'] : null
                     );
             }
         }
