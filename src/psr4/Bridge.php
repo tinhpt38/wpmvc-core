@@ -97,12 +97,6 @@ abstract class Bridge implements Plugable
     /**
      * Main constructor
      * @since 1.0.0
-     * @since 2.0.3 Cache and log are obligatory configuration settings.
-     * @since 2.0.4 Added models.
-     * @since 2.0.7 Added assets.
-     * @since 3.0.3 Added views alternative relative theme's path.
-     * @since 3.0.4 Typo comma fix.
-     * @since 3.1.0 Chages the way cache, log and assets are loaded.
      *
      * @param array $config Configuration options.
      */
@@ -177,10 +171,6 @@ abstract class Bridge implements Plugable
      * Calls to class or addon method.
      * Checks "addon_" prefix to search for addon methods.
      * @since 1.0.2
-     * @since 1.0.3 Added MVC controller and views direct calls.
-     * @since 2.0.4 Added metabox generation.
-     * @since 2.0.7 Metabox refactored.
-     * @since 3.0.2 Returns addon method call.
      *
      * @return mixed
      */
@@ -508,8 +498,6 @@ abstract class Bridge implements Plugable
     /**
      * Registers added models into WordPress.
      * @since 2.0.4
-     * @since 2.0.7  Support for automated models with no registration.
-     * @since 2.0.16 Registry supports
      */
     public function _models()
     {
@@ -709,7 +697,6 @@ abstract class Bridge implements Plugable
     /**
      * Returns valid action filter item.
      * @since 1.0.3
-     * @since 3.1.5 Mapping parameters support.
      *
      * @param string $hook          WordPress hook name.
      * @param string $mvc_call      Lightweight MVC call. (i.e. 'Controller@method')
@@ -798,8 +785,6 @@ abstract class Bridge implements Plugable
     /**
      * Addes automated wordpress metaboxes based on post type.
      * @since 2.0.4
-     * @since 2.0.7 Parameter removed and code refactored.
-     * @since 2.0.16 Fixes count() warning.
      */
     private function _metaboxes()
     {
@@ -823,7 +808,6 @@ abstract class Bridge implements Plugable
     /**
      * Addes automated WordPress save post functionality.
      * @since 2.0.4
-     * @since 2.0.9 Fix for multiple types calling to function.
      *
      * @param string $type Post type.
      * @param array  $args Hooks arguments.
@@ -893,7 +877,6 @@ abstract class Bridge implements Plugable
     /**
      * Loads localization.
      * @since 3.1.0
-     * @since 3.1.4 Extend locale file loadout.
      */
     private function _localize()
     {
