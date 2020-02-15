@@ -92,3 +92,13 @@ function submit_button()
 {
     return '<button></button>';
 }
+
+function sanitize_text_field($value)
+{
+    return $value;
+}
+
+function sanitize_email($value)
+{
+    return $value;
+}
