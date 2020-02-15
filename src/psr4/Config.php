@@ -20,7 +20,6 @@ class Config
 	 * @since 1.0.0
 	 */
 	protected $raw;
-
 	/**
 	 * Constructor.
 	 * @since 1.0.0
@@ -31,7 +30,6 @@ class Config
 	{
 		$this->raw = $raw;
 	}
-
 	/**
 	 * Returns value stored in given key.
 	 * Can acces multidimensional array values with a DOT(.)

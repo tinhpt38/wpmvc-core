@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
  * @author Alejandro Mostajo <http://about.me/amostajo>
  * @copyright 10Quality <http://www.10quality.com>
  * @license MIT
- * @package WPMVC\MVC
+ * @package WPMVC
  * @version 3.1.8
  */
 class LogTest extends TestCase
@@ -65,6 +65,7 @@ class LogTest extends TestCase
     /**
      * Test.
      * @since 3.1.6
+     * @group logger
      */
     public function testInit()
     {
@@ -76,6 +77,7 @@ class LogTest extends TestCase
     /**
      * Test.
      * @since 3.1.6
+     * @group logger
      */
     public function testInstance()
     {
@@ -85,6 +87,7 @@ class LogTest extends TestCase
     /**
      * Test.
      * @since 3.1.6
+     * @group logger
      */
     public function testInfo()
     {
@@ -97,6 +100,7 @@ class LogTest extends TestCase
     /**
      * Test.
      * @since 3.1.6
+     * @group logger
      */
     public function testDebug()
     {
@@ -109,6 +113,7 @@ class LogTest extends TestCase
     /**
      * Test.
      * @since 3.1.6
+     * @group logger
      */
     public function testError()
     {
@@ -121,6 +126,7 @@ class LogTest extends TestCase
     /**
      * Test.
      * @since 3.1.8
+     * @group logger
      */
     public function testDebugOnlyMessage()
     {
@@ -133,6 +139,7 @@ class LogTest extends TestCase
     /**
      * Test.
      * @since 3.1.8
+     * @group logger
      */
     public function testDebugDirectValue()
     {

@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
  * @author Alejandro Mostajo <http://about.me/amostajo>
  * @copyright 10Quality <http://www.10quality.com>
  * @license MIT
- * @package WPMVC\MVC
+ * @package WPMVC
  * @version 3.1.11
  */
 class RequestTest extends TestCase

@@ -9,11 +9,15 @@ use PHPUnit\Framework\TestCase;
  * @author Alejandro Mostajo <http://about.me/amostajo>
  * @copyright 10Quality <http://www.10quality.com>
  * @license MIT
- * @package WPMVC\MVC
+ * @package WPMVC
  * @version 3.0.0
  */
 class ResponseTest extends TestCase
 {
+    /**
+     * Test response.
+     * @group response
+     */
     function testDefaultFalse()
     {
         // Prepare
@@ -23,7 +27,10 @@ class ResponseTest extends TestCase
         $this->assertFalse($response->success);
         $this->assertTrue($response->passes);
     }
-
+    /**
+     * Test response.
+     * @group response
+     */
     function testDefaultTrue()
     {
         // Prepare
@@ -33,7 +40,10 @@ class ResponseTest extends TestCase
         $this->assertTrue($response->success);
         $this->assertTrue($response->passes);
     }
-
+    /**
+     * Test response.
+     * @group response
+     */
     function testError()
     {
         // Prepare
@@ -49,7 +59,10 @@ class ResponseTest extends TestCase
         $this->assertInternalType('array', $response->errors['field']);
         $this->assertEquals('Error', $response->errors['field'][0]);
     }
-
+    /**
+     * Test response.
+     * @group response
+     */
     function testCastingFail()
     {
         // Prepare
@@ -71,17 +84,18 @@ class ResponseTest extends TestCase
         $this->assertEquals($response->message, $r['message']);
         $this->assertEquals(500, $r['status']);
     }
-
+    /**
+     * Test response.
+     * @group response
+     */
     function testCastingSuccess()
     {
         // Prepare
         $response = new Response;
         $response->message = 'An error';
         $response->success = true;
-
         // Execute
         $r = $response->to_array();
-
         // Assert
         $this->assertInternalType('array', $r);
         $this->assertArrayHasKey('error', $r);

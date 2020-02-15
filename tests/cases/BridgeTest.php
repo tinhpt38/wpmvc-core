@@ -7,13 +7,15 @@ use PHPUnit\Framework\TestCase;
  * @author Alejandro Mostajo <http://about.me/amostajo>
  * @copyright 10Quality <http://www.10quality.com>
  * @license MIT
- * @package WPMVC\MVC
- * @version 3.1.9
+ * @package WPMVC
+ * @version 3.1.11
  */
 class BridgeTest extends TestCase
 {
     /**
      * Test bridge constructor.
+     * @group bridge
+     * @group config
      */
     function testConstruct()
     {
@@ -26,6 +28,8 @@ class BridgeTest extends TestCase
     }
     /**
      * Test dynamic method on controller. Void.
+     * @group bridge
+     * @group mvc
      */
     function testControllerVoidMethod()
     {
@@ -40,6 +44,8 @@ class BridgeTest extends TestCase
     }
     /**
      * Test dynamic method on controller. Return.
+     * @group bridge
+     * @group mvc
      */
     function testControllerReturnMethod()
     {
@@ -53,6 +59,8 @@ class BridgeTest extends TestCase
     }
     /**
      * Test dynamic method on view. Void.
+     * @group bridge
+     * @group mvc
      */
     function testViewVoidMethod()
     {
@@ -67,6 +75,8 @@ class BridgeTest extends TestCase
     }
     /**
      * Test dynamic method on view. Return.
+     * @group bridge
+     * @group mvc
      */
     function testViewReturnMethod()
     {
@@ -80,6 +90,8 @@ class BridgeTest extends TestCase
     }
     /**
      * Tests parameter override.
+     * @group bridge
+     * @group mvc
      */
     function testControllerParameterOverride()
     {
@@ -94,6 +106,8 @@ class BridgeTest extends TestCase
     }
     /**
      * Tests view parameter override.
+     * @group bridge
+     * @group mvc
      */
     function testViewParameterOverride()
     {
@@ -110,6 +124,8 @@ class BridgeTest extends TestCase
     /**
      * Test method.
      * @since 3.1.8
+     * @group bridge
+     * @group mvc
      */
     function testViewMethod()
     {
@@ -125,6 +141,8 @@ class BridgeTest extends TestCase
     /**
      * Test method.
      * @since 3.1.8
+     * @group bridge
+     * @group mvc
      */
     function testGetViewMethod()
     {

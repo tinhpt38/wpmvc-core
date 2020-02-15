@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
  * @author Alejandro Mostajo <http://about.me/amostajo>
  * @copyright 10Quality <http://www.10quality.com>
  * @license MIT
- * @package WPMVC\MVC
+ * @package WPMVC
  * @version 3.1.6
  */
 class CacheTest extends TestCase
@@ -24,6 +24,7 @@ class CacheTest extends TestCase
     /**
      * Cache test setup.
      * @since 3.1.6
+     * @group cache
      */
     private function setCache()
     {
@@ -44,6 +45,7 @@ class CacheTest extends TestCase
     /**
      * Test.
      * @since 3.1.6
+     * @group cache
      */
     public function testCacheInit()
     {
@@ -55,6 +57,7 @@ class CacheTest extends TestCase
     /**
      * Test.
      * @since 3.1.6
+     * @group cache
      */
     public function testInstance()
     {
@@ -64,6 +67,7 @@ class CacheTest extends TestCase
     /**
      * Test.
      * @since 3.1.6
+     * @group cache
      */
     public function testGetEmpty()
     {
@@ -75,6 +79,7 @@ class CacheTest extends TestCase
     /**
      * Test.
      * @since 3.1.6
+     * @group cache
      */
     public function testGetDefault()
     {
@@ -87,6 +92,7 @@ class CacheTest extends TestCase
     /**
      * Test.
      * @since 3.1.6
+     * @group cache
      */
     public function testAddGet()
     {
@@ -101,6 +107,7 @@ class CacheTest extends TestCase
     /**
      * Test.
      * @since 3.1.6
+     * @group cache
      */
     public function testHas()
     {
@@ -112,6 +119,7 @@ class CacheTest extends TestCase
     /**
      * Test.
      * @since 3.1.6
+     * @group cache
      */
     public function testNotHas()
     {
@@ -121,6 +129,7 @@ class CacheTest extends TestCase
     /**
      * Test.
      * @since 3.1.6
+     * @group cache
      */
     public function testForget()
     {
@@ -132,6 +141,7 @@ class CacheTest extends TestCase
     /**
      * Test.
      * @since 3.1.6
+     * @group cache
      */
     public function testRemember()
     {
@@ -149,6 +159,7 @@ class CacheTest extends TestCase
     /**
      * Test.
      * @since 3.1.6
+     * @group cache
      */
     public function testFlush()
     {

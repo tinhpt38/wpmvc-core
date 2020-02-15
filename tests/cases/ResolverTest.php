@@ -14,6 +14,10 @@ use PHPUnit\Framework\TestCase;
  */
 class ResolverTest extends TestCase
 {
+    /**
+     * Test resolver.
+     * @group resolver
+     */
     function testAdd()
     {
         // Prepare
@@ -26,11 +30,19 @@ class ResolverTest extends TestCase
         $this->assertNotNull(Resolver::get('test'));
         $this->assertEquals(7, Resolver::get('test')->id);
     }
+    /**
+     * Test resolver.
+     * @group resolver
+     */
     function testGet()
     {
         // Assert
         $this->assertNull(Resolver::get('other'));
     }
+    /**
+     * Test resolver.
+     * @group resolver
+     */
     function testExists()
     {
         // Prepare

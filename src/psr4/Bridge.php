@@ -25,74 +25,81 @@ use Exception;
 abstract class Bridge implements Plugable
 {
     /**
-     * Configuration file.
-     * @var array
+     * Main configuration file.
      * @since 1.0.0
+     * @var \WPMVC\Config
      */
     protected $config;
 
     /**
      * MVC engine.
-     * @var object Engine
      * @since 1.0.0
+     * @var \WPMVC\MVC\Engine
      */
     protected $mvc;
 
     /**
      * Add ons.
-     * @var array
      * @since 1.0.2
+     * @var array
      */
     protected $addons;
 
     /**
      * List of WordPress action hooks to add.
-     * @var array
      * @since 1.0.3
+     * @var array
      */
     protected $actions;
 
     /**
      * List of WordPress filter hooks to add.
-     * @var array
      * @since 1.0.3
+     * @var array
      */
     protected $filters;
 
     /**
      * List of WordPress shortcodes to add.
-     * @var array
      * @since 1.0.3
+     * @var array
      */
     protected $shortcodes;
 
     /**
      * List of WordPress widgets to add.
-     * @var array
      * @since 1.0.3
+     * @var array
      */
     protected $widgets;
 
     /**
      * List of Models (post_type) to add/register.
-     * @var array
      * @since 2.0.4
+     * @var array
      */
     protected $models;
 
     /**
      * List of assets to register or enqueue.
-     * @var array
      * @since 2.0.7
+     * @var array
      */
     protected $assets;
 
     /**
      * List of Models that requires bridge processing to function.
-     * @var array
      * @since 2.0.4
+     * @var array
      */
     protected $_automatedModels;
+
+    /**
+     * List of additional configuration files loaded per request.
+     * @since 3.1.11
+     * @var array
+     */
+    protected $_configs;
 
     /**
      * Main constructor
@@ -109,6 +116,7 @@ abstract class Bridge implements Plugable
         $this->models = [];
         $this->assets = [];
         $this->_automatedModels = [];
+        $this->_configs = [];
         $this->config = $config;
         $this->mvc = new Engine(
             $this->config->get( 'paths.views' ),
@@ -249,7 +257,7 @@ abstract class Bridge implements Plugable
      * Displays view with the parameters passed by.
      * @since 1.0.1
      *
-     * @param string $view   Name and location of the view within "theme/views" path.
+     * @param string $view   Name and location of the view within "[project]/views" path.
      * @param array  $params View parameters passed by.
      *
      * @return void
@@ -263,7 +271,7 @@ abstract class Bridge implements Plugable
      * Returns view based on the parameters passed by.
      * @since 3.1.8
      *
-     * @param string $view   Name and location of the view within "theme/views" path.
+     * @param string $view   Name and location of the view within "[project]/views" path.
      * @param array  $params View parameters passed by.
      *
      * @return string
@@ -482,6 +490,23 @@ abstract class Bridge implements Plugable
                 }
             }
         }
+    }
+
+    /**
+     * Returns a configuration file loaded as a Config class.
+     * @since 3.1.11
+     * 
+     * @param string $config_file Configuration file name without extension.
+     * 
+     * @return null|\WPMVC\Config
+     */
+    public function load_config( $config_file )
+    {
+        if ( !array_key_exists( $config_file, $this->_configs ) ) {
+            $filename = $this->config->get( 'paths.base' ) . 'Config/' . $config_file . '.php';
+            $this->_configs[$config_file] = new Config( File::auth()->exists( $filename ) ? include $filename : [] );
+        }
+        return $this->_configs[$config_file];
     }
 
     /**

@@ -9,13 +9,14 @@ use PHPUnit\Framework\TestCase;
  * @author Alejandro Mostajo <http://about.me/amostajo>
  * @copyright 10Quality <http://www.10quality.com>
  * @license MIT
- * @package WPMVC\MVC
+ * @package WPMVC
  * @version 3.1.10
  */
 class FunctionsTest extends TestCase
 {
     /**
      * Tests assets_url() global function.
+     * @group functions
      */
     function testAssetUrl()
     {
@@ -30,6 +31,7 @@ class FunctionsTest extends TestCase
     }
     /**
      * Tests get_wp_home_path() global function.
+     * @group functions
      */
     function testHomePathUrl()
     {
@@ -37,6 +39,7 @@ class FunctionsTest extends TestCase
     }
     /**
      * Tests exists_bridge() global function.
+     * @group functions
      */
     function testExistsBridge()
     {
@@ -45,6 +48,7 @@ class FunctionsTest extends TestCase
     }
     /**
      * Tests get_bridge() global function.
+     * @group functions
      */
     function testGetBridge()
     {
@@ -61,6 +65,7 @@ class FunctionsTest extends TestCase
     }
     /**
      * Tests theme_view() global function.
+     * @group functions
      */
     function testThemeView()
     {

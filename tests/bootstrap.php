@@ -16,6 +16,7 @@ $wp_query->query_vars = [];
 $config = new \WPMVC\Config([
     'namespace' => 'UnitTesting',
     'paths' => [
+                'base'          => __DIR__.'/framework/',
                 'views'         => __DIR__.'/framework/views/',
                 'controllers'   => __DIR__.'/framework/controllers/',
             ],
