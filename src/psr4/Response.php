@@ -141,7 +141,6 @@ class Response
     {
         return json_encode( $this->to_array(), JSON_NUMERIC_CHECK );
     }
-
     /**
      * Returns object as JSON string.
      * @since 3.0.0

@@ -35,8 +35,6 @@ abstract class Addon implements Plugable
     /**
      * Default constructor.
      * @since 1.0.0
-     * @since 3.0.0 Main as reference, new addon MVC location.
-     * @since 3.0.1 Fixes paths.
      *
      * @see https://github.com/10quality/wpmvc-addon-template
      *
