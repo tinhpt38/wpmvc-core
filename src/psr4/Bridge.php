@@ -638,7 +638,8 @@ abstract class Bridge implements Plugable
                     $name,
                     assets_url( $asset['path'], $dir ),
                     $asset['dep'],
-                    $asset_version
+                    $asset_version,
+                    $asset['footer']
                 );
                 if ($asset['enqueue'])
                     wp_enqueue_script(
@@ -692,7 +693,8 @@ abstract class Bridge implements Plugable
                     $name,
                     assets_url( $asset['path'], $dir ),
                     $asset['dep'],
-                    $asset_version
+                    $asset_version,
+                    $asset['footer']
                 );
                 if ($asset['enqueue'])
                     wp_enqueue_script(
