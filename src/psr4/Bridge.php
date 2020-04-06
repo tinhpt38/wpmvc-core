@@ -431,7 +431,7 @@ abstract class Bridge implements Plugable
             'path'      => $asset,
             'enqueue'   => $enqueue,
             'dep'       => $dep,
-            'flag'    => $flag,
+            'flag'      => $flag,
             'is_admin'  => $is_admin,
             'version'   => $version,
             'name_id'   => $name_id,
@@ -874,12 +874,11 @@ abstract class Bridge implements Plugable
                 : __DIR__;
             foreach ( $this->config->get( 'autoenqueue.assets' ) as $asset ) {
                 if ( $file->exists( assets_path( $asset['asset'], $dir ) ) ) {
-                    $flag = $asset['flag'] ? $asset['flag'] : $asset['footer'];
                     $this->add_asset(
                         $asset['asset'],
                         array_key_exists( 'enqueue', $asset ) ? $asset['enqueue'] : true,
                         $asset['dep'],
-                        $flag,
+                        array_key_exists( 'flag', $asset ) ? $asset['flag'] : ( array_key_exists( 'footer', $asset ) ? $asset['footer'] : null ),
                         array_key_exists( 'is_admin', $asset ) ? $asset['is_admin'] : false,
                         array_key_exists( 'version', $asset ) ? $asset['version'] : null,
                         array_key_exists( 'id', $asset ) ? $asset['id'] : null
