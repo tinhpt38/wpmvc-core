@@ -7,9 +7,9 @@
  * @copyright 10Quality <http://www.10quality.com>
  * @license MIT
  * @package WPMVC
- * @version 1.0.0
+ * @version 3.1.12
  */
-
+$lang = null;
 function is_wp_error($check)
 {
     return is_a($check, 'WP_Error');
@@ -35,7 +35,10 @@ function apply_filters($key, $value)
 
 function home_url($route = '')
 {
-    return 'http://localhost/phpunit'.$route;
+    $url = 'http://localhost/phpunit';
+    if (defined('ICL_LANGUAGE_CODE'))
+        $url = ICL_LANGUAGE_CODE === 'en' ? 'http://dev.example.com' : 'http://dev.example.com/'.ICL_LANGUAGE_CODE;
+    return $url.$route;
 }
 
 function get_home_path()
@@ -101,4 +104,8 @@ function sanitize_text_field($value)
 function sanitize_email($value)
 {
     return $value;
+}
+function icl_object_id()
+{
+    return uniqid();
 }

@@ -16,7 +16,7 @@ use WPMVC\Commands\PrettifyCommand;
  * @copyright 10Quality <http://www.10quality.com>
  * @license MIT
  * @package WPMVC
- * @version 3.1.10.1
+ * @version 3.1.12
  */
 
 if ( ! function_exists( 'resize_image' ) ) {
@@ -86,8 +86,7 @@ if ( ! function_exists( 'assets_url' ) ) {
         }
         // WPML support
         if ( function_exists( 'icl_object_id' ) && defined( 'ICL_LANGUAGE_CODE' ) ) {
-            if ( strpos( $url, '/' . ICL_LANGUAGE_CODE ) !== false)
-                $url = str_replace( '/' . ICL_LANGUAGE_CODE, '', $url );
+            $url = preg_replace( '#([a-z])/' . ICL_LANGUAGE_CODE . '#', '\\1', $url );
         }
         // Clean base path
         $route = preg_replace( '/.+?(?=wp-content)/', '', $route );

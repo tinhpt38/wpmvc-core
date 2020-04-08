@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
  * @copyright 10Quality <http://www.10quality.com>
  * @license MIT
  * @package WPMVC
- * @version 3.1.10
+ * @version 3.1.12
  */
 class FunctionsTest extends TestCase
 {
@@ -21,12 +21,12 @@ class FunctionsTest extends TestCase
     function testAssetUrl()
     {
         $this->assertEquals(
-            assets_url('img/wpmvc.png', 'C:/phpunit/wp-content/plugins/my-plugin/app/Controllers/FakeController.php'),
-            'http://localhost/phpunit/wp-content/plugins/my-plugin/assets/img/wpmvc.png'
+            'http://localhost/phpunit/wp-content/plugins/my-plugin/assets/img/wpmvc.png',
+            assets_url('img/wpmvc.png', 'C:/phpunit/wp-content/plugins/my-plugin/app/Controllers/FakeController.php')
         );
         $this->assertEquals(
-            assets_url('img/wpmvc.png', 'C:/phpunit/wp-content/themes/my-theme/app/Controllers/FakeController.php'),
-            'http://localhost/phpunit/wp-content/themes/my-theme/assets/img/wpmvc.png'
+            'http://localhost/phpunit/wp-content/themes/my-theme/assets/img/wpmvc.png',
+            assets_url('img/wpmvc.png', 'C:/phpunit/wp-content/themes/my-theme/app/Controllers/FakeController.php')
         );
     }
     /**
@@ -70,5 +70,62 @@ class FunctionsTest extends TestCase
     function testThemeView()
     {
         $this->assertTrue(function_exists('theme_view'));
+    }
+    /**
+     * Tests theme_view() global function.
+     * @group functions
+     * @group compatibility
+     * @group wpml
+     * @require function assets_url
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     */
+    function testAssetsUrlWpml()
+    {
+        // Prepare
+        define('ICL_LANGUAGE_CODE', 'es');
+        // Run
+        $url = assets_url( 'img/wpmvc.png', 'C:/phpunit/wp-content/plugins/my-plugin/app/Controllers/FakeController.php');
+        // Test
+        $this->assertEquals('http://dev.example.com/es/', home_url('/'));
+        $this->assertEquals('http://dev.example.com/wp-content/plugins/my-plugin/assets/img/wpmvc.png', $url);
+    }
+    /**
+     * Tests theme_view() global function.
+     * @group functions
+     * @group compatibility
+     * @group wpml
+     * @require function assets_url
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     */
+    function testAssetsUrlWpmlWithDomainConflic()
+    {
+        // Prepare
+        define('ICL_LANGUAGE_CODE', 'de');
+        // Run
+        $url = assets_url( 'img/wpmvc.png', 'C:/phpunit/wp-content/plugins/my-plugin/app/Controllers/FakeController.php');
+        // Test
+        $this->assertEquals('http://dev.example.com/de/', home_url('/'));
+        $this->assertEquals('http://dev.example.com/wp-content/plugins/my-plugin/assets/img/wpmvc.png', $url);
+    }
+    /**
+     * Tests theme_view() global function.
+     * @group functions
+     * @group compatibility
+     * @group wpml
+     * @require function assets_url
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     */
+    function testAssetsUrlWpmlWithoutUrlChange()
+    {
+        // Prepare
+        define('ICL_LANGUAGE_CODE', 'en');
+        // Run
+        $url = assets_url( 'img/wpmvc.png', 'C:/phpunit/wp-content/plugins/my-plugin/app/Controllers/FakeController.php');
+        // Test
+        $this->assertEquals('http://dev.example.com/', home_url('/'));
+        $this->assertEquals('http://dev.example.com/wp-content/plugins/my-plugin/assets/img/wpmvc.png', $url);
     }
 }
