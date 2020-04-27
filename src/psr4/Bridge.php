@@ -20,7 +20,7 @@ use Exception;
  * @copyright 10Quality <http://www.10quality.com>
  * @license MIT
  * @package WPMVC
- * @version 3.1.11
+ * @version 3.1.12
  */
 abstract class Bridge implements Plugable
 {
@@ -877,8 +877,8 @@ abstract class Bridge implements Plugable
                     $this->add_asset(
                         $asset['asset'],
                         array_key_exists( 'enqueue', $asset ) ? $asset['enqueue'] : true,
-                        $asset['dep'],
-                        array_key_exists( 'flag', $asset ) ? $asset['flag'] : ( array_key_exists( 'footer', $asset ) ? $asset['footer'] : null ),
+                        array_key_exists( 'dep', $asset ) ? $asset['dep'] : array(),
+                        array_key_exists( 'footer', $asset ) ? $asset['footer'] : ( array_key_exists( 'flag', $asset ) ? $asset['flag'] : null ),
                         array_key_exists( 'is_admin', $asset ) ? $asset['is_admin'] : false,
                         array_key_exists( 'version', $asset ) ? $asset['version'] : null,
                         array_key_exists( 'id', $asset ) ? $asset['id'] : null
