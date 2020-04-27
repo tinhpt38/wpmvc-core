@@ -416,21 +416,22 @@ abstract class Bridge implements Plugable
      * @param string $asset         Asset relative path (within assets forlder).
      * @param bool   $enqueue       Flag that indicates if asset should be enqueued upon registration.
      * @param array  $dep           Dependencies.
-     * @param bool   $footer        Flag that indicates if asset should enqueue at page footer.
+     * @param bool   $flag          Conditional flag. For script assests it indicates it should be enqueued in the footer.
+     *                              For style assests it indicates the media for which it has been defined.
      * @param bool   $is_admin      Flag that indicates if asset should be enqueue on admin.
      * @param string $version       Asset version.
      * @param string $name_id       Asset name ID (slug).
      * @
      */
-    public function add_asset( $asset, $enqueue = true, $dep = [], $footer = null, $is_admin = false, $version = null, $name_id = null )
+    public function add_asset( $asset, $enqueue = true, $dep = [], $flag = null, $is_admin = false, $version = null, $name_id = null )
     {
-        if ( $footer === null )
-            $footer = preg_match( '/\.js/', $asset );
+        if ( $flag === null )
+            $flag = preg_match( '/\.js/', $asset );
         $this->assets[] = [
             'path'      => $asset,
             'enqueue'   => $enqueue,
             'dep'       => $dep,
-            'footer'    => $footer,
+            'flag'      => $flag,
             'is_admin'  => $is_admin,
             'version'   => $version,
             'name_id'   => $name_id,
@@ -621,7 +622,8 @@ abstract class Bridge implements Plugable
                     $name,
                     assets_url( $asset['path'], $dir ),
                     $asset['dep'],
-                    $asset_version
+                    $asset_version,
+                    $asset['flag']
                 );
                 if ($asset['enqueue'])
                     wp_enqueue_style(
@@ -629,7 +631,7 @@ abstract class Bridge implements Plugable
                         assets_url( $asset['path'], $dir ),
                         $asset['dep'],
                         $asset_version,
-                        $asset['footer']
+                        $asset['flag']
                     );
             }
             // Scripts
@@ -639,7 +641,7 @@ abstract class Bridge implements Plugable
                     assets_url( $asset['path'], $dir ),
                     $asset['dep'],
                     $asset_version,
-                    $asset['footer']
+                    $asset['flag']
                 );
                 if ($asset['enqueue'])
                     wp_enqueue_script(
@@ -647,7 +649,7 @@ abstract class Bridge implements Plugable
                         assets_url( $asset['path'], $dir ),
                         $asset['dep'],
                         $asset_version,
-                        $asset['footer']
+                        $asset['flag']
                     );
             }
         }
@@ -676,7 +678,8 @@ abstract class Bridge implements Plugable
                     $name,
                     assets_url( $asset['path'], $dir ),
                     $asset['dep'],
-                    $asset_version
+                    $asset_version,
+                    $asset['flag']
                 );
                 if ($asset['enqueue'])
                     wp_enqueue_style(
@@ -684,7 +687,7 @@ abstract class Bridge implements Plugable
                         assets_url( $asset['path'], $dir ),
                         $asset['dep'],
                         $asset_version,
-                        $asset['footer']
+                        $asset['flag']
                     );
             }
             // Scripts
@@ -694,7 +697,7 @@ abstract class Bridge implements Plugable
                     assets_url( $asset['path'], $dir ),
                     $asset['dep'],
                     $asset_version,
-                    $asset['footer']
+                    $asset['flag']
                 );
                 if ($asset['enqueue'])
                     wp_enqueue_script(
@@ -702,7 +705,7 @@ abstract class Bridge implements Plugable
                         assets_url( $asset['path'], $dir ),
                         $asset['dep'],
                         $asset_version,
-                        $asset['footer']
+                        $asset['flag']
                     );
             }
         }
@@ -870,16 +873,17 @@ abstract class Bridge implements Plugable
                 ? $this->config->get( 'paths.base' )
                 : __DIR__;
             foreach ( $this->config->get( 'autoenqueue.assets' ) as $asset ) {
-                if ( $file->exists( assets_path( $asset['asset'], $dir ) ) )
+                if ( $file->exists( assets_path( $asset['asset'], $dir ) ) ) {
                     $this->add_asset(
                         $asset['asset'],
                         array_key_exists( 'enqueue', $asset ) ? $asset['enqueue'] : true,
                         $asset['dep'],
-                        $asset['footer'],
+                        array_key_exists( 'flag', $asset ) ? $asset['flag'] : ( array_key_exists( 'footer', $asset ) ? $asset['footer'] : null ),
                         array_key_exists( 'is_admin', $asset ) ? $asset['is_admin'] : false,
                         array_key_exists( 'version', $asset ) ? $asset['version'] : null,
                         array_key_exists( 'id', $asset ) ? $asset['id'] : null
                     );
+                }
             }
         }
     }
