@@ -20,7 +20,7 @@ use Exception;
  * @copyright 10Quality <http://www.10quality.com>
  * @license MIT
  * @package WPMVC
- * @version 3.1.12
+ * @version 3.1.13
  */
 abstract class Bridge implements Plugable
 {
@@ -421,12 +421,11 @@ abstract class Bridge implements Plugable
      * @param bool   $is_admin      Flag that indicates if asset should be enqueue on admin.
      * @param string $version       Asset version.
      * @param string $name_id       Asset name ID (slug).
-     * @
      */
     public function add_asset( $asset, $enqueue = true, $dep = [], $flag = null, $is_admin = false, $version = null, $name_id = null )
     {
         if ( $flag === null )
-            $flag = preg_match( '/\.js/', $asset );
+            $flag = strpos( $asset, '.css') !== false ? 'all' : true;
         $this->assets[] = [
             'path'      => $asset,
             'enqueue'   => $enqueue,
@@ -441,8 +440,6 @@ abstract class Bridge implements Plugable
     /**
      * Adds hooks and filters into WordPress core.
      * @since 1.0.3
-     * @since 2.0.4 Added models.
-     * @since 2.0.7 Added assets.
      */
     public function add_hooks()
     {
@@ -750,7 +747,6 @@ abstract class Bridge implements Plugable
     /**
      * Override mvc arguments with those defined when adding an action or filter.
      * @since 1.0.3
-     * @since 3.1.5 Mapping parameters support.
      *
      * @param string $mvc_call Lightweight MVC call. (i.e. 'Controller@method')
      * @param array  $args     Current args for call.
