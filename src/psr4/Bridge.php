@@ -20,7 +20,7 @@ use Exception;
  * @copyright 10Quality <http://www.10quality.com>
  * @license MIT
  * @package WPMVC
- * @version 3.1.12
+ * @version 3.2.0
  */
 abstract class Bridge implements Plugable
 {
@@ -88,6 +88,13 @@ abstract class Bridge implements Plugable
     protected $assets;
 
     /**
+     * List of blocks to register.
+     * @since 3.2.0
+     * @var array
+     */
+    protected $blocks;
+
+    /**
      * List of Models that requires bridge processing to function.
      * @since 2.0.4
      * @var array
@@ -115,6 +122,7 @@ abstract class Bridge implements Plugable
         $this->widgets = [];
         $this->models = [];
         $this->assets = [];
+        $this->blocks = [];
         $this->_automatedModels = [];
         $this->_configs = [];
         $this->config = $config;
@@ -154,6 +162,9 @@ abstract class Bridge implements Plugable
         if ( is_admin() )
             $this->autoload_on_admin();
         $this->add_hooks();
+        // Blocks?
+        if ( !empty( $this->blocks ) )
+            add_action( 'init', [&$this, '_blocks'] );
     }
 
     /**
@@ -436,6 +447,17 @@ abstract class Bridge implements Plugable
             'version'   => $version,
             'name_id'   => $name_id,
         ];
+    }
+
+    /**
+     * Adds/registers a new gutenberg block.
+     * @since 3.2.0
+     *
+     * @param string $name Block name without namespace.
+     */
+    public function add_block( $name )
+    {
+        $this->blocks[] = $name;
     }
 
     /**
@@ -929,6 +951,25 @@ abstract class Bridge implements Plugable
                 ! load_textdomain( $domain, sprintf( '%s%s-%s.mo', $this->config->get( 'localize.path' ), $domain, $locale ) )
             )
                 load_plugin_textdomain( $domain, false, $this->config->get( 'localize.path' ) );
+        }
+    }
+    /**
+     * Registers blocks into WordPress.
+     * @since 3.2.0
+     */
+    public function _blocks()
+    {
+        foreach ( $this->blocks as $name ) {
+            $script =  $this->config->get( 'localize.textdomain' ) . '-block-' . $name;
+            wp_register_script(
+                $script,
+                assets_url( 'blocks/' . $name . '.js' ),
+                [],
+                $this->config->get( 'version' )
+            );
+            register_block_type( $this->config->get( 'localize.textdomain' ) . '/' . $name, [
+                'editor_script' => $script,
+            ] );
         }
     }
 }
