@@ -602,7 +602,7 @@ abstract class Bridge implements Plugable
      */
     public function _assets()
     {
-        $version = $this->config->get('version') ? $this->config->get('version') : '1.0.0';
+        $version = $this->config->get( 'version' ) ? $this->config->get( 'version' ) : '1.0.0';
         $dir = $this->config->get( 'paths.base' )
             ? $this->config->get( 'paths.base' )
             : __DIR__;
@@ -611,7 +611,7 @@ abstract class Bridge implements Plugable
             $name = !empty( $asset['name_id'] )
                 ? $asset['name_id']
                 : strtolower( preg_replace( '/css|js|\/|\.min|\./', '', $asset['path'] ) )
-                    . '-' . strtolower( $this->config->get('namespace') );
+                    . '-' . strtolower( $this->config->get( 'namespace' ) );
             $asset_version = empty( $asset['version'] ) ? $version : $asset['version'];
             // Styles
             if ( preg_match( '/\.css/', $asset['path'] ) ) {
@@ -658,7 +658,7 @@ abstract class Bridge implements Plugable
      */
     public function _admin_assets()
     {
-        $version = $this->config->get('version') ? $this->config->get('version') : '1.0.0';
+        $version = $this->config->get( 'version' ) ? $this->config->get( 'version' ) : '1.0.0';
         $dir = $this->config->get( 'paths.base' )
             ? $this->config->get( 'paths.base' )
             : __DIR__;
@@ -667,7 +667,7 @@ abstract class Bridge implements Plugable
             $name = !empty( $asset['name_id'] )
                 ? $asset['name_id']
                 : strtolower( preg_replace( '/css|js|\/|\.min|\./', '', $asset['path'] ) )
-                    . '-' . strtolower( $this->config->get('namespace') );
+                    . '-' . strtolower( $this->config->get( 'namespace' ) );
             $asset_version = empty( $asset['version'] ) ? $version : $asset['version'];
             // Styles
             if ( preg_match( '/\.css/', $asset['path'] ) ) {
