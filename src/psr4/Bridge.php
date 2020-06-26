@@ -454,10 +454,14 @@ abstract class Bridge implements Plugable
      * @since 3.2.0
      *
      * @param string $name Block name without namespace.
+     * @param array  $dep  Additional JS dependencies.
      */
-    public function add_block( $name )
+    public function add_block( $name, $dep = [] )
     {
-        $this->blocks[] = $name;
+        $this->blocks[] = [
+            'name' => $name,
+            'dep' => is_array( $dep ) ? $dep : explode( ',', $dep ),
+        ];
     }
 
     /**
@@ -959,15 +963,15 @@ abstract class Bridge implements Plugable
      */
     public function _blocks()
     {
-        foreach ( $this->blocks as $name ) {
-            $script =  $this->config->get( 'localize.textdomain' ) . '-block-' . $name;
+        for ( $i = count( $this->blocks )-1; $i >= 0; --$i ) {
+            $script =  $this->config->get( 'localize.textdomain' ) . '-block-' . $this->blocks[$i]['name'];
             wp_register_script(
                 $script,
-                assets_url( 'blocks/' . $name . '.js' ),
-                [],
+                assets_url( 'blocks/' . $this->blocks[$i]['name'] . '.js' ),
+                array_merge( [ 'wp-blocks' ], $this->blocks[$i]['dep'] ),
                 $this->config->get( 'version' )
             );
-            register_block_type( $this->config->get( 'localize.textdomain' ) . '/' . $name, [
+            register_block_type( $this->config->get( 'localize.textdomain' ) . '/' . $this->blocks[$i]['name'], [
                 'editor_script' => $script,
             ] );
         }
