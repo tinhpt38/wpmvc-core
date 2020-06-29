@@ -963,17 +963,39 @@ abstract class Bridge implements Plugable
      */
     public function _blocks()
     {
+        $file = File::auth();
+        $dir = $this->config->get( 'paths.base' ) ? $this->config->get( 'paths.base' ) : __DIR__;
         for ( $i = count( $this->blocks )-1; $i >= 0; --$i ) {
-            $script =  $this->config->get( 'localize.textdomain' ) . '-block-' . $this->blocks[$i]['name'];
+            if ( !$file->exists( assets_path( 'blocks/' . $this->blocks[$i]['name'] . '/block.js', $dir ) ) )
+                continue;
+            $block = ['editor_script' => $this->config->get( 'localize.textdomain' ) . '-block-' . $this->blocks[$i]['name']];
             wp_register_script(
-                $script,
-                assets_url( 'blocks/' . $this->blocks[$i]['name'] . '.js' ),
-                array_merge( [ 'wp-blocks' ], $this->blocks[$i]['dep'] ),
+                $block['editor_script'],
+                assets_url( 'blocks/' . $this->blocks[$i]['name'] . '/block.js', $dir ),
+                array_merge( [ 'wp-blocks', 'wp-i18n', 'wp-element' ], $this->blocks[$i]['dep'] ),
                 $this->config->get( 'version' )
             );
-            register_block_type( $this->config->get( 'localize.textdomain' ) . '/' . $this->blocks[$i]['name'], [
-                'editor_script' => $script,
-            ] );
+            // Add styles
+            if ( $file->exists( assets_path( 'blocks/' . $this->blocks[$i]['name'] . '/editor.css', $dir ) ) ) {
+                $block['editor_style'] = $this->config->get( 'localize.textdomain' ) . '-block-' . $this->blocks[$i]['name'] . '-editor';
+                wp_register_style(
+                    $block['editor_style'],
+                    assets_url( 'blocks/' . $this->blocks[$i]['name'] . '/editor.css', $dir ),
+                    [],
+                    $this->config->get( 'version' )
+                );
+            }
+            if ( $file->exists( assets_path( 'blocks/' . $this->blocks[$i]['name'] . '/style.css', $dir ) ) ) {
+                $block['style'] = $this->config->get( 'localize.textdomain' ) . '-block-' . $this->blocks[$i]['name'] . '-style';
+                wp_register_style(
+                    $block['style'],
+                    assets_url( 'blocks/' . $this->blocks[$i]['name'] . '/style.css', $dir ),
+                    [],
+                    $this->config->get( 'version' )
+                );
+            }
+            // Register block
+            register_block_type( $this->config->get( 'localize.textdomain' ) . '/' . $this->blocks[$i]['name'], $block );
         }
     }
 }
