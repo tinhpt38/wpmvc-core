@@ -20,7 +20,7 @@ use Exception;
  * @copyright 10Quality <http://www.10quality.com>
  * @license MIT
  * @package WPMVC
- * @version 3.1.13
+ * @version 3.1.14
  */
 abstract class Bridge implements Plugable
 {
@@ -482,9 +482,17 @@ abstract class Bridge implements Plugable
             }
             // Assets
             if ( count( $this->assets ) > 0 ) {
-                add_action( 'wp_enqueue_scripts', [ &$this, '_assets' ], 10 );
+                add_action(
+                    'wp_enqueue_scripts',
+                    [ &$this, '_assets' ],
+                    $this->config->get( 'autoenqueue.priority' ) ? $this->config->get( 'autoenqueue.priority' ) : 10
+                );
                 if ( is_admin() ) {
-                    add_action( 'admin_enqueue_scripts', [ &$this, '_admin_assets' ], 10 );
+                    add_action(
+                        'admin_enqueue_scripts',
+                        [ &$this, '_admin_assets' ],
+                        $this->config->get( 'autoenqueue.priority' ) ? $this->config->get( 'autoenqueue.priority' ) : 10
+                    );
                 }
             }
         }
