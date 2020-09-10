@@ -12,6 +12,14 @@ require_once __DIR__.'/../vendor/10quality/wp-file/tests/framework/class-wp-file
 define('FRAMEWORK_PATH', __DIR__ . '/framework');
 define('TEMP_PATH', FRAMEWORK_PATH . '/.tmp');
 define('FS_CHMOD_FILE', '0777');
+define('test.defined', 123);
+define('constants.b', 'wp-config');
+define('namespace', 'wp-config');
+define('type', 'wp-config');
+define('version', 'wp-config');
+define('author', 'wp-config');
+define('addons', 'wp-config');
+define('license', 'wp-config');
 $wp_query = new stdClass;
 $wp_query->query_vars = [];
 $config = new \WPMVC\Config([

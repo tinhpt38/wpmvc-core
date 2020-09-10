@@ -9,8 +9,8 @@ namespace WPMVC;
  * @author Alejandro Mostajo <http://about.me/amostajo>
  * @copyright 10Quality <http://www.10quality.com>
  * @license MIT
- * @package WPMVC
- * @version 1.0.0
+ * @package wpmvc-core
+ * @version 3.1.14
  */
 class Config
 {
@@ -43,8 +43,17 @@ class Config
 	 */
 	public function get( $key, $sub = null )
 	{
-		if ( empty( $sub ) ) $sub = $this->raw;
-
+		if ( defined( $key )
+			&& strpos( $key, 'namespace' ) !== 0
+			&& strpos( $key, 'type' ) !== 0
+			&& strpos( $key, 'version' ) !== 0
+			&& strpos( $key, 'author' ) !== 0
+			&& strpos( $key, 'addons' ) !== 0
+			&& strpos( $key, 'license' ) !== 0
+		)
+			return constant( $key );
+		if ( empty( $sub ) )
+			$sub = $this->raw;
 		$keys = explode( '.', $key );
 		if ( empty( $keys ) ) return;
 
