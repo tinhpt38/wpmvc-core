@@ -32,3 +32,9 @@ $config = new \WPMVC\Config([
     'assert'    => 'test',
 ]);
 $wp_filesystem = new WP_Filesystem;
+$lang = null;
+$hooks = [
+    'actions' => [],
+    'filters' => [],
+    'removed' => [],
+];

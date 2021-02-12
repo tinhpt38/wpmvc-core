@@ -7,9 +7,8 @@
  * @copyright 10Quality <http://www.10quality.com>
  * @license MIT
  * @package WPMVC
- * @version 3.1.12
+ * @version 3.1.15
  */
-$lang = null;
 function is_wp_error($check)
 {
     return is_a($check, 'WP_Error');
@@ -46,9 +45,29 @@ function get_home_path()
     return 'C:\\temp\\phpunit\\';
 }
 
-function add_action($key, $call) {}
+function add_action($key, $call) {
+    global $hooks;
+    $hooks['actions'][$key] = $call;
+}
 
-function add_filter($key, $call) {}
+function add_filter($key, $call) {
+    global $hooks;
+    $hooks['filters'][$key] = $call;
+}
+
+function remove_action($key, $call) {
+    global $hooks;
+    if (array_key_exists($key, $hooks['actions']))
+        unset($hooks['actions'][$key]);
+    $hooks['removed'][$key] = $call;
+}
+
+function remove_filter($key, $call) {
+    global $hooks;
+    if (array_key_exists($key, $hooks['filters']))
+        unset($hooks['filters'][$key]);
+    $hooks['removed'][$key] = $call;
+}
 
 function add_shortcode($key, $call) {}
 

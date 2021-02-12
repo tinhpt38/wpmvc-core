@@ -154,4 +154,91 @@ class BridgeTest extends TestCase
         // Assert
         $this->assertEquals('<h1>gat_view()</h1>Test View', $html);
     }
+    /**
+     * Test method.
+     * @since 3.1.15
+     * @group bridge
+     * @group mvc
+     * @group hooks
+     */
+    function testAddAction()
+    {
+        // Prepare
+        global $config;
+        global $hooks;
+        $main = new Main($config);
+        // Run
+        $main->add_action( 'test', 'TestController@testing' );
+        $main->add_action( 'test2', 'view@test2' );
+        $main->add_hooks();
+        // Assert
+        $this->assertArrayHasKey('test', $hooks['actions']);
+        $this->assertArrayHasKey('test2', $hooks['actions']);
+        $this->assertEquals('[{},"_c_void_TestController@testing"]', json_encode($hooks['actions']['test']));
+        $this->assertEquals('[{},"_v_void_view@test2"]', json_encode($hooks['actions']['test2']));
+    }
+    /**
+     * Test method.
+     * @since 3.1.15
+     * @group bridge
+     * @group mvc
+     * @group hooks
+     */
+    function testAddFilter()
+    {
+        // Prepare
+        global $config;
+        global $hooks;
+        $main = new Main($config);
+        // Run
+        $main->add_filter( 'controller', 'FilterController@filtering' );
+        $main->add_hooks();
+        // Assert
+        $this->assertArrayHasKey('controller', $hooks['filters']);
+        $this->assertEquals('[{},"_c_return_FilterController@filtering"]', json_encode($hooks['filters']['controller']));
+    }
+    /**
+     * Test method.
+     * @since 3.1.15
+     * @group bridge
+     * @group mvc
+     * @group hooks
+     */
+    function testRemoveAction()
+    {
+        // Prepare
+        global $config;
+        global $hooks;
+        $main = new Main($config);
+        // Run
+        $main->add_action( 'action1', 'ActionController@to_remove' );
+        $main->add_hooks();
+        $main->remove_action( 'action1', 'ActionController@to_remove' );
+        // Assert
+        $this->assertArrayNotHasKey('action1', $hooks['actions']);
+        $this->assertArrayHasKey('action1', $hooks['removed']);
+        $this->assertEquals('[{},"_c_void_ActionController@to_remove"]', json_encode($hooks['removed']['action1']));
+    }
+    /**
+     * Test method.
+     * @since 3.1.15
+     * @group bridge
+     * @group mvc
+     * @group hooks
+     */
+    function testRemoveFilter()
+    {
+        // Prepare
+        global $config;
+        global $hooks;
+        $main = new Main($config);
+        // Run
+        $main->add_filter( 'filter1', 'FilterController@to_remove' );
+        $main->add_hooks();
+        $main->remove_filter( 'filter1', 'FilterController@to_remove' );
+        // Assert
+        $this->assertArrayNotHasKey('filter1', $hooks['filters']);
+        $this->assertArrayHasKey('filter1', $hooks['removed']);
+        $this->assertEquals('[{},"_c_return_FilterController@to_remove"]', json_encode($hooks['removed']['filter1']));
+    }
 }

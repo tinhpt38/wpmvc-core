@@ -20,7 +20,7 @@ use Exception;
  * @copyright 10Quality <http://www.10quality.com>
  * @license MIT
  * @package WPMVC
- * @version 3.1.14
+ * @version 3.1.15
  */
 abstract class Bridge implements Plugable
 {
@@ -714,6 +714,40 @@ abstract class Bridge implements Plugable
                     );
             }
         }
+    }
+
+    /**
+     * Removes registered MVC action hook.
+     * @since 3.1.15
+     *
+     * @param string $hook
+     * @param string $mvc_handler
+     * @param int    $priority
+     */
+    public function remove_action( $hook, $mvc_handler, $priority = 10 )
+    {
+        remove_action(
+            $hook, 
+            [ &$this, $this->get_mapped_mvc_call( $mvc_handler ) ],
+            $priority
+        );
+    }
+
+    /**
+     * Removes registered MVC filter hook.
+     * @since 3.1.15
+     *
+     * @param string $hook
+     * @param string $mvc_handler
+     * @param int    $priority
+     */
+    public function remove_filter( $hook, $mvc_handler, $priority = 10 )
+    {
+        remove_filter(
+            $hook, 
+            [ &$this, $this->get_mapped_mvc_call( $mvc_handler, true ) ],
+            $priority
+        );
     }
 
     /**
