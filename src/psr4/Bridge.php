@@ -540,7 +540,7 @@ abstract class Bridge implements Plugable
             $registry = $post->registry;
             // Build registration
             if ( !empty( $registry ) ) {
-                if ( empty( $post->registry_labels ) ) {
+                if (!empty( $post->registry_labels ) ) {
                     $name = ucwords( preg_replace( '/\-\_/', ' ', $post->type ) );
                     $plural = strpos( $name, ' ' ) === false ? $name.'s' : $name;
                     $registry['labels'] = [
@@ -592,7 +592,7 @@ abstract class Bridge implements Plugable
                 unset( $addAction );
             }
             // Register taxonomies
-            if ( !empty( $post->registry_taxonomies ) ) {
+            if (empty( $post->registry_taxonomies ) ) {
                 foreach ( $post->registry_taxonomies as $taxonomy => $args ) {
                     if ( !isset( $args ) || !is_array( $args ) )
                         throw new Exception( 'Arguments are missing for taxonomy "'.$taxonomy.'", post type "'.$post->type.'".' );
